@@ -1,50 +1,70 @@
 <template>
   <div class="usersDialogue">
-    <el-form :model="form">
+    <el-form :model="form" size="mini">
+      <el-form-item v-if="flag=='detail'" label="用户" :label-width="formLabelWidth">
+        <span v-if="form.role==0">非社联成员</span>
+        <span v-else>社联成员</span>
+      </el-form-item>
+      <el-form-item v-else label="用户" :label-width="formLabelWidth">
+        <el-select v-model="form.role" placeholder="请选择权限">
+          <el-option label="非社联成员" value=0></el-option>
+          <el-option label="社联成员" value=1></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="学号" :label-width="formLabelWidth">
-<!--        <span v-if="flag==='detail'">{{ formData.teamDesc }}</span>-->
-        <el-input v-model="form.stuNumber" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.stuNumber }}</span>
+        <el-input v-else v-model="form.stuNumber" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="姓名" :label-width="formLabelWidth">
-        <el-input v-model="form.realname" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.realname }}</span>
+        <el-input v-else v-model="form.realname" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-input v-model="form.gender" autocomplete="off"></el-input>
+      <el-form-item v-if="flag=='detail'" label="性别" :label-width="formLabelWidth">
+        <span v-if="form.gender=='0'">男</span>
+        <span v-else>女</span>
+      </el-form-item>
+      <el-form-item v-else label="性别" :label-width="formLabelWidth">
+        <el-select v-model="form.gender" placeholder="请选择性别">
+          <el-option label="男" value="0"></el-option>
+          <el-option label="女" value="1"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="行政班级" :label-width="formLabelWidth">
-        <el-input v-model="form.class" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.class }}</span>
+        <el-input v-else v-model="form.class" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="电子邮箱" :label-width="formLabelWidth">
-        <el-input v-model="form.email" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.email }}</span>
+        <el-input v-else v-model="form.email" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="电话" :label-width="formLabelWidth">
-        <el-input v-model="form.phone" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.phone }}</span>
+        <el-input v-else v-model="form.phone" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="微信" :label-width="formLabelWidth">
-        <el-input v-model="form.wechat" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.wechat }}</span>
+        <el-input v-else v-model="form.wechat" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="QQ" :label-width="formLabelWidth">
-        <el-input v-model="form.qq" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.qq }}</span>
+        <el-input v-else v-model="form.qq" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="出生日期" :label-width="formLabelWidth">
-        <el-input v-model="form.birthday" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.birthday }}</span>
+        <el-input v-else v-model="form.birthday" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="住址" :label-width="formLabelWidth">
-        <el-input v-model="form.home" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.home }}</span>
+        <el-input v-else v-model="form.home" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="民族" :label-width="formLabelWidth">
-        <el-input v-model="form.nation" autocomplete="off"></el-input>
+        <span v-if="flag==='detail'">{{ form.nation }}</span>
+        <el-input v-else v-model="form.nation" autocomplete="off"></el-input>
       </el-form-item>
-<!--      <el-form-item label="活动区域" :label-width="formLabelWidth">-->
-<!--        <el-select v-model="form.region" placeholder="请选择活动区域">-->
-<!--          <el-option label="区域一" value="shanghai"></el-option>-->
-<!--          <el-option label="区域二" value="beijing"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="getEdit()">确 定</el-button>
+    <div slot="footer" class="dialog-footer" align="right">
+      <el-button size="mini" @click="back">取 消</el-button>
+      <el-button size="mini" type="primary" @click="getEdit()">确 定</el-button>
     </div>
   </div>
 </template>
@@ -81,7 +101,7 @@ export default {
         home: '',
         nation: ''
       },
-      formLabelWidth: '120px'
+      formLabelWidth: '80px'
     }
   },
   mounted() {
@@ -90,11 +110,18 @@ export default {
       this.getDetail()
     }
   },
+  watch: {
+    uId() {
+      this.form.uid = this.uId
+      this.getDetail()
+    }
+  },
   methods: {
     getDetail() {
       rootUser({ uid: this.uId }).then(response => {
         console.log('getdetail', response)
         if (response.code === 20000) {
+          response.data.role = response.data.role.toString()
           this.form = response.data
         }
       })
@@ -102,6 +129,7 @@ export default {
     getEdit() {
       rootUpdate(this.form).then(response => {
         console.log('getedit', response)
+        console.log(this.form)
         if (response.code === 20000) {
           this.$notify({
             title: 'Success',
@@ -112,6 +140,9 @@ export default {
           this.$emit('close-dialogue', false)
         }
       })
+    },
+    back() {
+      this.$emit('close-dialogue', false)
     }
   }
 }

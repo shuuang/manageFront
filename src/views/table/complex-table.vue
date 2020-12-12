@@ -1,17 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input v-model="search" size="mini" placeholder="search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearch(search)" />
+      <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-search" @click="handleSearch(search)">
         Search
       </el-button>
 <!--      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
@@ -20,9 +11,9 @@
 <!--      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">-->
 <!--        Export-->
 <!--      </el-button>-->
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox>
+<!--      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">-->
+<!--        reviewer-->
+<!--      </el-checkbox>-->
     </div>
 
     <el-table
@@ -34,6 +25,11 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
+<!--      <el-table-column label="编号"  width="80">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.uid }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="ID" prop="uid" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.uid }}</span>
@@ -51,7 +47,8 @@
       </el-table-column>
       <el-table-column label="性别" width="90px">
         <template slot-scope="{row}">
-          <span>{{ row.gender }}</span>
+          <span v-if="row.gender==1">女</span>
+          <span v-else>男</span>
         </template>
       </el-table-column>
       <el-table-column label="邮箱" width="200px">
@@ -59,19 +56,9 @@
           <span>{{ row.email }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" width="200px">
-        <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-<!--      <el-table-column label="QQ" width="180px">-->
+<!--      <el-table-column label="联系方式" width="200px">-->
 <!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.qq }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="微信" width="180px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.wechat }}</span>-->
+<!--          <span>{{ row.phone }}</span>-->
 <!--        </template>-->
 <!--      </el-table-column>-->
       <el-table-column label="行政班级" width="180px">
@@ -144,7 +131,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="title" :visible.sync="dialogFormVisible">
+     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
       <users-dialogue :flag="flag" :uId="uId" @close-dialogue="closeDialogue"></users-dialogue>
     </el-dialog>
 <!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />-->
@@ -158,19 +145,6 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import usersDialogue from '@/views/components/usersDialogue'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
 
 export default {
   name: 'ComplexTable',
@@ -187,9 +161,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
     }
   },
   data() {
@@ -207,7 +178,6 @@ export default {
         sort: '+id'
       },
       importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
@@ -235,7 +205,9 @@ export default {
       },
       downloadLoading: false,
       uId: '',
-      flag: ''
+      flag: '',
+      title: '',
+      search: ''
     }
   },
   created() {
@@ -247,18 +219,17 @@ export default {
       usersList().then(response => {
         console.log(response)
         this.list = response.data
+        // if (response.data[0].gender === '0') {
+        //   console.log(response.data[0].gender)
+        //   this.list.genders = '男'
+        // }
+        // if (response.data[0].gender === '1') {
+        //   console.log(response.data[0].gender)
+        //   this.list.genders = '女'
+        //   console.log(this.list.genders)
+        // }
         this.listLoading = false
-        // this.total = response.data.total
-        //
-        // // Just to simulate the time of the request
-        // setTimeout(() => {
-
-        // }, 1.5 * 1000)
       })
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
     },
     handleModifyStatus(row, status) {
       this.$message({
@@ -279,7 +250,6 @@ export default {
       } else {
         this.listQuery.sort = '-id'
       }
-      this.handleFilter()
     },
     resetTemp() {
       this.temp = {
@@ -300,53 +270,17 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    // createData() {
-    //   this.$refs['dataForm'].validate((valid) => {
-    //     if (valid) {
-    //       this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-    //       this.temp.author = 'vue-element-admin'
-    //       createArticle(this.temp).then(() => {
-    //         this.list.unshift(this.temp)
-    //         this.dialogFormVisible = false
-    //         this.$notify({
-    //           title: 'Success',
-    //           message: 'Created Successfully',
-    //           type: 'success',
-    //           duration: 2000
-    //         })
-    //       })
-    //     }
-    //   })
-    // },
-    // handleDetail(uid) {
-    //   this.uId = uid
-    //   this.dialogFormVisible = true
-    // },
     Dialog(uid, flag) {
       this.dialogFormVisible = true
       this.uId = uid
-      console.log(this.flag)
       this.flag = flag
+      if (flag === 'detail') {
+        this.title = '用户详情'
+      }
+      if (flag === 'edit') {
+        this.title = '用户编辑'
+      }
     },
-    // updateData() {
-    //   this.$refs['dataForm'].validate((valid) => {
-    //     if (valid) {
-    //       const tempData = Object.assign({}, this.temp)
-    //       tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-    //       updateArticle(tempData).then(() => {
-    //         const index = this.list.findIndex(v => v.id === this.temp.id)
-    //         this.list.splice(index, 1, this.temp)
-    //         this.dialogFormVisible = false
-    //         this.$notify({
-    //           title: 'Success',
-    //           message: 'Update Successfully',
-    //           type: 'success',
-    //           duration: 2000
-    //         })
-    //       })
-    //     }
-    //   })
-    // },
     handleDelete(row, index) {
       delUser({ uid: row.uid }).then(response => {
         console.log(response)
@@ -361,12 +295,14 @@ export default {
         }
       })
     },
-    // handleFetchPv(pv) {
-    //   fetchPv(pv).then(response => {
-    //     this.pvData = response.data.pvData
-    //     this.dialogPvVisible = true
-    //   })
-    // },
+    handleSearch(search) {
+      this.list.forEach(item => {
+        // console.log(item)
+        if (item.realname === search) {
+          this.list = item
+        }
+      })
+    },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
@@ -397,6 +333,9 @@ export default {
     closeDialogue(payload) {
       console.log('payload', payload)
       this.dialogFormVisible = false
+      if (!payload) {
+        this.getList()
+      }
     }
   }
 }
