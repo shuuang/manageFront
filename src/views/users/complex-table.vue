@@ -3,7 +3,10 @@
     <div class="filter-container">
       <el-input v-model="search" size="mini" placeholder="search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearch(search)" />
       <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-search" @click="handleSearch(search)">
-        Search
+        搜索
+      </el-button>
+      <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-search" @click="handleReset(search)">
+        重置
       </el-button>
 <!--      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
 <!--        Add-->
@@ -56,61 +59,16 @@
           <span>{{ row.email }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="联系方式" width="200px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.phone }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="行政班级" width="180px">
         <template slot-scope="{row}">
           <span>{{ row.class }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="出生日期" width="130px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.birthday | parseTime('{y}-{m}-{d}') }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="民族" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.nation }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="寝室" width="150px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.home }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="realname" min-width="150px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>-->
-<!--          <el-tag>{{ row.type | typeFilter }}</el-tag>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="Readings" width="95">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>-->
-<!--          <span v-else>0</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column v-if="showReviewer" label="Reviewer" width="110px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span style="color:red;">{{ row.reviewer }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="Imp" width="80px">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column label="Status" class-name="status-col" width="100">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <el-tag :type="row.status | statusFilter">-->
-<!--            {{ row.status }}-->
-<!--          </el-tag>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="Actions" width="420px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button plain type="info" size="mini" @click="Dialog(row.uid, flag='detail')">
@@ -119,19 +77,13 @@
           <el-button size="mini" @click="Dialog(row.uid, flag='edit')">
             编辑
           </el-button>
-<!--          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">-->
-<!--            Publish-->
-<!--          </el-button>-->
-<!--          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">-->
-<!--            Draft-->
-<!--          </el-button>-->
           <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
       <users-dialogue :flag="flag" :uId="uId" @close-dialogue="closeDialogue"></users-dialogue>
     </el-dialog>
 <!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />-->
@@ -140,10 +92,10 @@
 
 <script>
 // import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
-import { usersList, delUser } from '@/api/myuser'
+import { usersList, delUser, searchUser } from '@/api/myuser'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import usersDialogue from '@/views/components/usersDialogue'
+import usersDialogue from '@/views/users/usersDialogue'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -231,6 +183,14 @@ export default {
         this.listLoading = false
       })
     },
+    handleSearch() {
+      searchUser({ realname: this.search }).then(response => {
+        if (response.code === 20000) {
+          console.log(response)
+          this.list = response.data
+        }
+      })
+    },
     handleModifyStatus(row, status) {
       this.$message({
         message: '操作Success',
@@ -295,14 +255,6 @@ export default {
         }
       })
     },
-    handleSearch(search) {
-      this.list.forEach(item => {
-        // console.log(item)
-        if (item.realname === search) {
-          this.list = item
-        }
-      })
-    },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
@@ -336,6 +288,10 @@ export default {
       if (!payload) {
         this.getList()
       }
+    },
+    handleReset(search) {
+      this.getList()
+      this.search = ''
     }
   }
 }

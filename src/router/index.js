@@ -184,13 +184,39 @@ export const asyncRoutes = [
       }
     ]
   },
+  // 用户列表
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/users/complex-table'),
+        name: 'Icons',
+        meta: { title: '用户', icon: 'peoples', noCache: true }
+      }
+    ]
+  },
+  // 社团列表
+  {
+    path: '/club',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/club/club'),
+        name: 'Icons',
+        meta: { title: '社团', icon: 'tree-table', noCache: true }
+      }
+    ]
+  },
 
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter中的compmentmixin
   // componentsRouter,
   chartsRouter,
   // nestedRouter,
-  tableRouter,
+  // tableRouter,
 
   // {
   //   path: '/example',
