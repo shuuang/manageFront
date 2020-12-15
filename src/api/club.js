@@ -14,3 +14,18 @@ export function delClub(data) {
     params: data
   })
 }
+export function rootUpdateClub(data) {
+  return request({
+    url: '/club/rootupdateclub',
+    method: 'post',
+    data: data
+  })
+}
+// 社联搜索
+export function searchClub(data) {
+  return request({
+    url: '/club/search',
+    method: 'post',
+    data: data
+  })
+}

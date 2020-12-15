@@ -1,22 +1,22 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="search" size="mini" placeholder="search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearch(search)" />
-      <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-search" @click="handleSearch(search)">
+      <el-input v-model="search" size="small" placeholder="search" style="width: 80%;margin-right: 15px" class="filter-item" @keyup.enter.native="handleSearch(search)" />
+      <el-button v-waves class="filter-item" size="small" type="primary" icon="el-icon-search" @click="handleSearch(search)">
         搜索
       </el-button>
-      <el-button v-waves class="filter-item" size="mini" type="primary" icon="el-icon-search" @click="handleReset(search)">
+      <el-button v-waves class="filter-item" size="small" type="primary" icon="el-icon-search" @click="handleReset(search)">
         重置
       </el-button>
-<!--      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
-<!--        Add-->
-<!--      </el-button>-->
-<!--      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">-->
-<!--        Export-->
-<!--      </el-button>-->
-<!--      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">-->
-<!--        reviewer-->
-<!--      </el-checkbox>-->
+      <!--      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
+      <!--        Add-->
+      <!--      </el-button>-->
+      <!--      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">-->
+      <!--        Export-->
+      <!--      </el-button>-->
+      <!--      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">-->
+      <!--        reviewer-->
+      <!--      </el-checkbox>-->
     </div>
 
     <el-table
@@ -28,11 +28,11 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-<!--      <el-table-column label="编号"  width="80">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.uid }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="编号"  width="80">-->
+      <!--        <template slot-scope="{row}">-->
+      <!--          <span>{{ row.uid }}</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column label="ID" prop="uid" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.uid }}</span>
@@ -69,7 +69,7 @@
           <span>{{ row.nation }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="420px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="420px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button plain type="info" size="mini" @click="Dialog(row.uid, flag='detail')">
             详情
@@ -84,9 +84,9 @@
       </el-table-column>
     </el-table>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
-      <users-dialogue :flag="flag" :uId="uId" @close-dialogue="closeDialogue"></users-dialogue>
+      <users-dialogue :flag="flag" :u-id="uId" @close-dialogue="closeDialogue" />
     </el-dialog>
-<!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />-->
+    <!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />-->
   </div>
 </template>
 

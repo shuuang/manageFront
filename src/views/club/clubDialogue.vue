@@ -1,65 +1,45 @@
 <template>
   <div class="clubDialogue">
     <el-form :model="form" size="mini">
-      <el-form-item v-if="flag=='detail'" label="用户" :label-width="formLabelWidth">
-        <span v-if="form.role==0">非社联成员</span>
-        <span v-else>社联成员</span>
+      <el-form-item label="社团名称" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.cname }}</span>
+        <el-input v-else v-model="form.cname" autocomplete="off" />
       </el-form-item>
-      <el-form-item v-else label="用户" :label-width="formLabelWidth">
-        <el-select v-model="form.role" placeholder="请选择权限">
-          <el-option label="非社联成员" value=0></el-option>
-          <el-option label="社联成员" value=1></el-option>
-        </el-select>
+      <el-form-item label="社长" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.uid }}</span>
+        <el-input v-else v-model="form.uid" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="学号" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.stuNumber }}</span>
-        <el-input v-else v-model="form.stuNumber" autocomplete="off"></el-input>
+      <el-form-item label="指导老师" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.teacher }}</span>
+        <el-input v-else v-model="form.teacher" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="姓名" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.realname }}</span>
-        <el-input v-else v-model="form.realname" autocomplete="off"></el-input>
+      <el-form-item label="创建时间" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.createAt }}</span>
+        <el-input v-else v-model="form.createAt" autocomplete="off" />
       </el-form-item>
-      <el-form-item v-if="flag=='detail'" label="性别" :label-width="formLabelWidth">
-        <span v-if="form.gender=='0'">男</span>
-        <span v-else>女</span>
+      <el-form-item label="简介" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.introduction }}</span>
+        <el-input v-else v-model="form.introduction" autocomplete="off" />
       </el-form-item>
-      <el-form-item v-else label="性别" :label-width="formLabelWidth">
-        <el-select v-model="form.gender" placeholder="请选择性别">
-          <el-option label="男" value="0"></el-option>
-          <el-option label="女" value="1"></el-option>
-        </el-select>
+      <el-form-item label="社团Logo" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.img }}</span>
+        <el-input v-else v-model="form.img" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="行政班级" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.class }}</span>
-        <el-input v-else v-model="form.class" autocomplete="off"></el-input>
+      <el-form-item label="申请材料" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.file }}</span>
+        <el-input v-else v-model="form.file" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="电子邮箱" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.email }}</span>
-        <el-input v-else v-model="form.email" autocomplete="off"></el-input>
+      <el-form-item label="申请照片" :label-width="formLabelWidth">
+        <el-image
+          v-if="flag==='detail'"
+          style="width: 100px; height: 100px"
+          :src="form.appImage"
+          fit="cover"
+        />
       </el-form-item>
-      <el-form-item label="电话" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.phone }}</span>
-        <el-input v-else v-model="form.phone" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="微信" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.wechat }}</span>
-        <el-input v-else v-model="form.wechat" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="QQ" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.qq }}</span>
-        <el-input v-else v-model="form.qq" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="出生日期" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.birthday }}</span>
-        <el-input v-else v-model="form.birthday" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="住址" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.home }}</span>
-        <el-input v-else v-model="form.home" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="民族" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.nation }}</span>
-        <el-input v-else v-model="form.nation" autocomplete="off"></el-input>
+      <el-form-item label="值班表" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'">{{ form.duty }}</span>
+        <el-input v-else v-model="form.duty" autocomplete="off" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" align="right">
@@ -70,10 +50,10 @@
 </template>
 
 <script>
-import { rootUser, rootUpdate } from '@/api/myuser'
+import { clubList, rootUpdateClub } from '@/api/club'
 
 export default {
-  name: "clubDialogue",
+  name: 'ClubDialogue',
   props: {
     cId: {
       require: false,
@@ -86,50 +66,50 @@ export default {
   },
   data() {
     return {
+      uploadUrl: 'http://127.0.0.1:3000/public/upload/' + name,
       form: {
-        role: '',
+        cid: '',
         uid: '',
-        stuNumber: '',
-        realname: '',
-        gender: '',
-        class: '',
-        email: '',
-        phone: '',
-        wechat: '',
-        qq: '',
-        birthday: '',
-        home: '',
-        nation: ''
+        cname: '',
+        teacher: '',
+        createAt: '',
+        introduction: '',
+        img: '',
+        file: '',
+        duty: '',
+        appImage: '',
+        appStatus: ''
       },
-      formLabelWidth: '80px'
-    }
-  },
-  mounted() {
-    if (this.uId) {
-      console.log(this.uId, this.flag)
-      this.getDetail()
+      formLabelWidth: '80px',
+      dialogImageUrl: '',
+      dialogVisible: false,
+      disabled: false
     }
   },
   watch: {
-    uId() {
-      this.form.uid = this.uId
+    cId() {
+      this.form.cid = this.cId
+      this.getDetail()
+    }
+  },
+  mounted() {
+    if (this.cId) {
+      // console.log(this.cId, this.flag)
       this.getDetail()
     }
   },
   methods: {
     getDetail() {
-      rootUser({ uid: this.uId }).then(response => {
-        console.log('getdetail', response)
-        if (response.code === 20000) {
-          response.data.role = response.data.role.toString()
-          this.form = response.data
-        }
+      clubList({ appStatus: '1' }).then(response => {
+        const form = response.data.filter(item => item.cid === this.cId)
+        const fileUrl = form[0].appImage.replace(/\\/g, '/').replace(/public/, '')
+        form[0]['appImage'] = 'http://127.0.0.1:3000' + fileUrl
+        // console.log(form)
+        this.form = form[0]
       })
     },
     getEdit() {
-      rootUpdate(this.form).then(response => {
-        console.log('getedit', response)
-        console.log(this.form)
+      rootUpdateClub(this.form).then(response => {
         if (response.code === 20000) {
           this.$notify({
             title: 'Success',
@@ -147,7 +127,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 
 </style>

@@ -191,7 +191,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/users/complex-table'),
+        component: () => import('@/views/users/users'),
         name: 'Icons',
         meta: { title: '用户', icon: 'peoples', noCache: true }
       }
@@ -210,7 +210,19 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  // 活动列表
+  {
+    path: '/activity',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/activity/activity'),
+        name: 'Icons',
+        meta: { title: '活动', icon: 'tree-table', noCache: true }
+      }
+    ]
+  },
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter中的compmentmixin
   // componentsRouter,

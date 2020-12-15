@@ -7,17 +7,17 @@
       </el-form-item>
       <el-form-item v-else label="用户" :label-width="formLabelWidth">
         <el-select v-model="form.role" placeholder="请选择权限">
-          <el-option label="非社联成员" value=0></el-option>
-          <el-option label="社联成员" value=1></el-option>
+          <el-option label="非社联成员" value="0" />
+          <el-option label="社联成员" value="1" />
         </el-select>
       </el-form-item>
       <el-form-item label="学号" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.stuNumber }}</span>
-        <el-input v-else v-model="form.stuNumber" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.stuNumber" autocomplete="off" />
       </el-form-item>
       <el-form-item label="姓名" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.realname }}</span>
-        <el-input v-else v-model="form.realname" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.realname" autocomplete="off" />
       </el-form-item>
       <el-form-item v-if="flag=='detail'" label="性别" :label-width="formLabelWidth">
         <span v-if="form.gender=='0'">男</span>
@@ -25,41 +25,41 @@
       </el-form-item>
       <el-form-item v-else label="性别" :label-width="formLabelWidth">
         <el-select v-model="form.gender" placeholder="请选择性别">
-          <el-option label="男" value="0"></el-option>
-          <el-option label="女" value="1"></el-option>
+          <el-option label="男" value="0" />
+          <el-option label="女" value="1" />
         </el-select>
       </el-form-item>
       <el-form-item label="行政班级" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.class }}</span>
-        <el-input v-else v-model="form.class" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.class" autocomplete="off" />
       </el-form-item>
       <el-form-item label="电子邮箱" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.email }}</span>
-        <el-input v-else v-model="form.email" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.email" autocomplete="off" />
       </el-form-item>
       <el-form-item label="电话" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.phone }}</span>
-        <el-input v-else v-model="form.phone" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.phone" autocomplete="off" />
       </el-form-item>
       <el-form-item label="微信" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.wechat }}</span>
-        <el-input v-else v-model="form.wechat" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.wechat" autocomplete="off" />
       </el-form-item>
       <el-form-item label="QQ" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.qq }}</span>
-        <el-input v-else v-model="form.qq" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.qq" autocomplete="off" />
       </el-form-item>
       <el-form-item label="出生日期" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.birthday }}</span>
-        <el-input v-else v-model="form.birthday" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.birthday" autocomplete="off" />
       </el-form-item>
       <el-form-item label="住址" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.home }}</span>
-        <el-input v-else v-model="form.home" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.home" autocomplete="off" />
       </el-form-item>
       <el-form-item label="民族" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.nation }}</span>
-        <el-input v-else v-model="form.nation" autocomplete="off"></el-input>
+        <el-input v-else v-model="form.nation" autocomplete="off" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" align="right">
@@ -73,7 +73,7 @@
 import { rootUser, rootUpdate } from '@/api/myuser'
 
 export default {
-  name: "usersDialogue",
+  name: 'UsersDialogue',
   props: {
     uId: {
       require: false,
@@ -104,15 +104,15 @@ export default {
       formLabelWidth: '80px'
     }
   },
-  mounted() {
-    if (this.uId) {
-      console.log(this.uId, this.flag)
-      this.getDetail()
-    }
-  },
   watch: {
     uId() {
       this.form.uid = this.uId
+      this.getDetail()
+    }
+  },
+  mounted() {
+    if (this.uId) {
+      console.log(this.uId, this.flag)
       this.getDetail()
     }
   },
