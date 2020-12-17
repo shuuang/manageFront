@@ -204,7 +204,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/club/club'),
+        component: () => import('@/views/users/dialogue'),
         name: 'Icons',
         meta: { title: '社团', icon: 'tree-table', noCache: true }
       }
