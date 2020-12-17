@@ -78,10 +78,10 @@
       </el-table-column>
       <el-table-column label="Actions" width="420px">
         <template slot-scope="{row,$index}">
-          <el-button plain type="info" size="mini" @click="Dialog(row.cid, flag='detail')">
+          <el-button plain type="info" size="mini" @click="detail()">
             详情
           </el-button>
-          <el-button size="mini" @click="Dialog(row.cid, flag='edit')">
+          <el-button size="mini" @click="edit()">
             编辑
           </el-button>
           <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">
@@ -89,10 +89,23 @@
           </el-button>
         </template>
       </el-table-column>
+<!--      <el-table-column label="Actions" width="420px">-->
+<!--        <template slot-scope="{row,$index}">-->
+<!--          <el-button plain type="info" size="mini" @click="Dialog(row.cid, flag='detail')">-->
+<!--            详情-->
+<!--          </el-button>-->
+<!--          <el-button size="mini" @click="Dialog(row.cid, flag='edit')">-->
+<!--            编辑-->
+<!--          </el-button>-->
+<!--          <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">-->
+<!--            删除-->
+<!--          </el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
-      <club-dialogue :flag="flag" :c-id="cId" @close-dialogue="closeDialogue" />
-    </el-dialog>
+<!--    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">-->
+      <club-dialogue :dialogFormVisible="dialogFormVisible" :config="config" :list="list"></club-dialogue>
+<!--    </el-dialog>-->
   </div>
 </template>
 
@@ -112,7 +125,21 @@ export default {
       cId: '',
       flag: '',
       title: '',
-      search: ''
+      search: '',
+      config: {
+        title: '详情',
+        type: 'detail',
+        infoapi: {
+          url: '/club/clubinfo',
+          method: 'post',
+          data: { cid: 12 }
+        },
+        updateapi: {}
+      },
+      list: {
+        cid: ['社团ID', 'input'],
+        cname: ['社团名称', 'input']
+      }
     }
   },
   created() {
@@ -126,16 +153,20 @@ export default {
         this.clublist = response.data
       })
     },
-    Dialog(cid, flag) {
+    // Dialog(cid, flag) {
+    //   this.dialogFormVisible = true
+    //   this.cId = cid
+    //   this.flag = flag
+    //   if (flag === 'detail') {
+    //     this.title = '社团详情'
+    //   }
+    //   if (flag === 'edit') {
+    //     this.title = '社团编辑'
+    //   }
+    // },
+    detail() {
+      console.log('detail')
       this.dialogFormVisible = true
-      this.cId = cid
-      this.flag = flag
-      if (flag === 'detail') {
-        this.title = '社团详情'
-      }
-      if (flag === 'edit') {
-        this.title = '社团编辑'
-      }
     },
     handleDelete(row, index) {
       delClub({ cid: row.cid }).then(response => {
