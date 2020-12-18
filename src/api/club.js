@@ -29,3 +29,10 @@ export function searchClub(data) {
     data: data
   })
 }
+export function clubInfo(data) {
+  return request({
+    url: '/club/clubinfo',
+    method: 'post',
+    data: data
+  })
+}

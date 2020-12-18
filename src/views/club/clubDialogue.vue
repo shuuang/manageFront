@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { clubList, rootUpdateClub } from '@/api/club'
+import { rootUpdateClub, clubInfo } from '@/api/club'
 
 export default {
   name: 'ClubDialogue',
@@ -100,12 +100,12 @@ export default {
   },
   methods: {
     getDetail() {
-      clubList({ appStatus: '1' }).then(response => {
-        const form = response.data.filter(item => item.cid === this.cId)
-        const fileUrl = form[0].appImage.replace(/\\/g, '/').replace(/public/, '')
-        form[0]['appImage'] = 'http://127.0.0.1:3000' + fileUrl
+      clubInfo({ cid: this.cId }).then(response => {
+        // const form = response.data.filter(item => item.cid === this.cId)
+        // const fileUrl = form[0].appImage.replace(/\\/g, '/').replace(/public/, '')
+        // form[0]['appImage'] = 'http://127.0.0.1:3000' + fileUrl
         // console.log(form)
-        this.form = form[0]
+        this.form = response.data
       })
     },
     getEdit() {

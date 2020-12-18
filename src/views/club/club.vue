@@ -104,19 +104,22 @@
 <!--      </el-table-column>-->
     </el-table>
 <!--    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">-->
-      <club-dialogue></club-dialogue>
+      <dialogue ref="flag"></dialogue>
+<!--      <club-dialogue :flag="flag" :c-id="cId" @close-dialogue="closeDialogue" />-->
 <!--    </el-dialog>-->
   </div>
 </template>
 
 <script>
 import { clubList, delClub, searchClub } from '@/api/club'
-import clubDialogue from '@/views/users/dialogue'
+import dialogue from '@/views/users/dialogue'
+// import clubDialogue from '@/views/club/clubDialogue'
 
 export default {
   name: 'Club',
   components: {
-    clubDialogue
+    dialogue
+    // clubDialogue
   },
   data() {
     return {
@@ -134,11 +137,22 @@ export default {
           method: 'post',
           data: {}
         },
-        updateapi: {}
+        updateapi: {
+          url: '/club/rootupdateclub',
+          method: 'post',
+          data: {}
+        }
       },
       list: {
         cid: ['社团ID', 'input'],
-        cname: ['社团名称', 'input']
+        cname: ['社团名称', 'input'],
+        teacher: ['指导教师', 'input'],
+        uid: ['社长', 'input'],
+        createAt: ['创办时间', 'input'],
+        introduction: ['简介', 'input'],
+        file: ['申请材料', 'input'],
+        appImage: ['申请图片', 'img'],
+        duty: ['值班表', 'input']
       }
     }
   },
@@ -153,22 +167,26 @@ export default {
         this.clublist = response.data
       })
     },
-    // Dialog(cid, flag) {
-    //   this.dialogFormVisible = true
-    //   this.cId = cid
-    //   this.flag = flag
-    //   if (flag === 'detail') {
-    //     this.title = '社团详情'
-    //   }
-    //   if (flag === 'edit') {
-    //     this.title = '社团编辑'
-    //   }
-    // },
-    detail(id) {
-      console.log('detail')
-      this.config.infoapi.data = { cid: id }
-      console.log(this.config.infoapi)
+    Dialog(cid, flag) {
       this.dialogFormVisible = true
+      this.cId = cid
+      this.flag = flag
+      if (flag === 'detail') {
+        this.title = '社团详情'
+      }
+      if (flag === 'edit') {
+        this.title = '社团编辑'
+      }
+    },
+    detail(id) {
+      // console.log('detail')
+      this.config.infoapi.data = { cid: id }
+      // console.log(this.config.infoapi)
+      this.dialogFormVisible = true
+      this.$refs.flag.parentGetform()
+    },
+    edit(id) {
+      this.config.updateapi.data = { }
     },
     handleDelete(row, index) {
       delClub({ cid: row.cid }).then(response => {
