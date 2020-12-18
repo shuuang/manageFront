@@ -29,17 +29,17 @@
       >
         重置
       </el-button>
-    </div>
-    <el-dropdown>
+      <el-dropdown>
       <span class="el-dropdown-link">
         社团状态<i class="el-icon-arrow-down el-icon--right" />
       </span>
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item>已通过</el-dropdown-item>
-        <el-dropdown-item>待审核</el-dropdown-item>
-        <el-dropdown-item>未通过</el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>已通过</el-dropdown-item>
+          <el-dropdown-item>待审核</el-dropdown-item>
+          <el-dropdown-item>未通过</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
     <el-table
       :data="clublist"
       style="width: 100%"
@@ -78,7 +78,7 @@
       </el-table-column>
       <el-table-column label="Actions" width="420px">
         <template slot-scope="{row,$index}">
-          <el-button plain type="info" size="mini" @click="detail()">
+          <el-button plain type="info" size="mini" @click="detail(row.cid)">
             详情
           </el-button>
           <el-button size="mini" @click="edit()">
@@ -104,7 +104,7 @@
 <!--      </el-table-column>-->
     </el-table>
 <!--    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">-->
-      <club-dialogue :dialogFormVisible="dialogFormVisible" :config="config" :list="list"></club-dialogue>
+      <club-dialogue></club-dialogue>
 <!--    </el-dialog>-->
   </div>
 </template>
@@ -132,7 +132,7 @@ export default {
         infoapi: {
           url: '/club/clubinfo',
           method: 'post',
-          data: { cid: 12 }
+          data: {}
         },
         updateapi: {}
       },
@@ -164,8 +164,10 @@ export default {
     //     this.title = '社团编辑'
     //   }
     // },
-    detail() {
+    detail(id) {
       console.log('detail')
+      this.config.infoapi.data = { cid: id }
+      console.log(this.config.infoapi)
       this.dialogFormVisible = true
     },
     handleDelete(row, index) {

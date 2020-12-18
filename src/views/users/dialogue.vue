@@ -23,20 +23,26 @@ import { apiName } from '@/api/api'
 export default {
   name: 'Dialogue',
   props: {
-    config: {
-      require: true,
-      type: Object
-    },
-    list: {
-      require: true,
-      type: Object
-    },
-    dialogFormVisible: Boolean
+    // config: {
+    //   require: true,
+    //   type: Object
+    // },
+    // list: {
+    //   require: true,
+    //   type: Object
+    // },
+    // dialogFormVisible: {
+    //   require: true,
+    //   type: Boolean
+    //   // default: true
+    // }
   },
   data() {
     return {
       formLabelWidth: '120px',
-      formArr: {} // 返回的数据
+      formArr: {}, // 返回的数据
+      dialogFormVisible: this.$parent.dialogFormVisible,
+      config: this.$parent.config,
       // config: {
       //   title: '详情',
       //   type: 'detail',
@@ -44,10 +50,11 @@ export default {
       //   updateapi: {}
       // },
       // 设置的
+      list: this.$parent.list
       // list: {
       //   cid: ['社团ID', 'input'],
       //   gender: ['性别', 'select', [{ name: '男', value: 0 }, { name: '女', value: 1 }]]
-      // },
+      // }
       // label: { cid: '社团ID', cname: '社团名称' },
       // type: { cid: 'input', cname: 'span' },
       // dialogFormVisible: false
@@ -57,8 +64,16 @@ export default {
     dialogFormVisible() {
       if (this.dialogueVisible) {
         console.log('this.config')
+        this.config = this.$parent.config
+        console.log(this.config)
         this.getForm()
       }
+    }
+  },
+  mounted() {
+    if (this.dialogFormVisible) {
+      console.log(this.dialogFormVisible)
+      // this.getDetail()
     }
   },
   methods: {
