@@ -1,7 +1,7 @@
 <template>
   <el-dialog :title="config.title" :visible.sync="$parent.dialogFormVisible" width="30%">
     <el-form>
-      <el-form-item v-for="(item,key) in $parent.list" :key="item" :label="item[0]" :label-width="formLabelWidth">
+      <el-form-item v-for="(item,key) in $parent.list" :key="key" :label="item[0]" :label-width="formLabelWidth">
         <span v-if="$parent.config.type=='detail'&&item[1]!=='img'">{{ checkSelect(formArr[key],item[2]) }}</span>
         <el-input v-if="$parent.config.type=='edit'&&item[1]=='input'" v-model="formArr[key]">{{ formArr[key] }}</el-input>
         <el-select v-if="$parent.config.type=='edit'&&item[1]=='select'" v-model="formArr[key]" placeholder="请选择性别">
@@ -14,10 +14,48 @@
           :src="formArr[key]"
           fit="cover"
         />
+        <el-upload
+          v-if="$parent.config.type=='edit'&&item[1]=='img'"
+          action="#"
+          list-type="picture-card"
+          :auto-upload="false">
+          <i slot="default" class="el-icon-plus"></i>
+          <div slot="file" slot-scope="{file}">
+            <img
+              class="el-upload-list__item-thumbnail"
+              :src="formArr[key]"
+            >
+            <span class="el-upload-list__item-actions">
+            <span
+              class="el-upload-list__item-preview"
+              @click="handlePictureCardPreview(file)"
+            >
+              <i class="el-icon-zoom-in"></i>
+            </span>
+            <span
+              v-if="!disabled"
+              class="el-upload-list__item-delete"
+              @click="handleDownload(file)"
+            >
+              <i class="el-icon-download"></i>
+            </span>
+            <span
+              v-if="!disabled"
+              class="el-upload-list__item-delete"
+              @click="handleRemove(file)"
+            >
+              <i class="el-icon-delete"></i>
+            </span>
+          </span>
+          </div>
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="formArr[key]">
+        </el-dialog>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" align="right" v-if="$parent.config.type=='edit'">
-      <el-button size="mini" @click="back">取 消</el-button>
+      <el-button size="mini" @click="$parent.dialogFormVisible=false">取 消</el-button>
       <el-button size="mini" type="primary" @click="updateForm()">确 定</el-button>
     </div>
   </el-dialog>
@@ -48,6 +86,9 @@ export default {
       formLabelWidth: '120px',
       formArr: {}, // 返回的数据
       dialogFormVisible: this.$parent.dialogFormVisible,
+      dialogImageUrl: '',
+      dialogVisible: false,
+      disabled: false,
       config: this.$parent.config,
       // config: {
       //   title: '详情',
@@ -103,16 +144,15 @@ export default {
       apiName(this.$parent.config.infoapi).then(response => {
         // console.log('getForm', response.data)
         // const form = response.data.filter(item => item.cid === this.cId)
-        // if (this.list.)
         // const fileUrl = response.data.appImage.replace(/\\/g, '/').replace(/public/, '')
-        response.data['appImage'] = 'http://127.0.0.1:3000/' + response.data.appImage
+        response.data['appImage'] = process.env.VUE_APP_BASE_API + '/' + response.data.appImage
         console.log(response.data)
         this.formArr = response.data
       })
     },
     updateForm() {
-      this.config.updateapi.data = this.formArr
-      apiName(this.config.updateapi).then(response => {
+      this.$parent.config.updateapi.data = this.formArr
+      apiName(this.$parent.config.updateapi).then(response => {
         console.log(response.data)
         if (response.code === 20000) {
           this.$notify({
@@ -121,8 +161,20 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.$parent.getList()
+          this.$parent.dialogFormVisible = false
         }
       })
+    },
+    handleRemove(file) {
+      console.log(file)
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    handleDownload(file) {
+      console.log(file)
     }
   }
 }

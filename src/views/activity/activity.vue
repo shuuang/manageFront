@@ -29,7 +29,7 @@
           <span>{{ row.endDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="420px">
+      <el-table-column label="Actions" width="350px">
         <template slot-scope="{row,$index}">
           <el-button plain type="info" size="mini" @click="Dialog(row.cid, flag='detail')">
             详情
@@ -80,7 +80,7 @@ export default {
           this.activitylist.splice(index, 1)
         }
       })
-    },
+    }
   }
 }
 </script>

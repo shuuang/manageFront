@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item label="简介" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.introduction }}</span>
-        <el-input v-else v-model="form.introduction" autocomplete="off" />
+        <el-input v-else type="textarea" autosize v-model="form.introduction" autocomplete="off" />
       </el-form-item>
       <el-form-item label="社团Logo" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.img }}</span>

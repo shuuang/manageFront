@@ -16,7 +16,9 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    config.headers['Content-Type'] = false
+    // config.headers['Content-Type'] = 'multipart/form-data'
+    // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     config.data = qs.stringify({ ...config.data })
     if (store.getters.token) {
       // let each request carry token

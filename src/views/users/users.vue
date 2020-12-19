@@ -69,7 +69,7 @@
           <span>{{ row.nation }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="420px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="350px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button plain type="info" size="mini" @click="Dialog(row.uid, flag='detail')">
             详情

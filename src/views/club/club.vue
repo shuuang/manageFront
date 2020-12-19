@@ -1,45 +1,5 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input
-        v-model="search"
-        size="small"
-        placeholder="search"
-        style="width: 80%;margin-right: 15px"
-        class="filter-item"
-        @keyup.enter.native="handleSearch(search)"
-      />
-      <el-button
-        v-waves
-        class="filter-item"
-        size="small"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleSearch(search)"
-      >
-        搜索
-      </el-button>
-      <el-button
-        v-waves
-        class="filter-item"
-        size="small"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleReset(search)"
-      >
-        重置
-      </el-button>
-      <el-dropdown>
-      <span class="el-dropdown-link">
-        社团状态<i class="el-icon-arrow-down el-icon--right" />
-      </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>已通过</el-dropdown-item>
-          <el-dropdown-item>待审核</el-dropdown-item>
-          <el-dropdown-item>未通过</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
     <el-table
       :data="clublist"
       style="width: 100%"
@@ -69,36 +29,48 @@
           <span>{{ row.createAt }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="社团状态" width="180">
+      <el-table-column label="社团状态" width="140">
         <template slot-scope="{row}">
           <el-tag v-show="row.appStatus==0" type="info">审核中</el-tag>
           <el-tag v-show="row.appStatus==1" type="success">已通过</el-tag>
           <el-tag v-show="row.appStatus==2" type="warning">未通过</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="420px">
+      <el-table-column label="Actions" width="300px">
         <template slot-scope="{row,$index}">
-          <el-button plain type="info" size="mini" @click="detail(row.cid)">
+          <el-button v-if="status==1||status==0" plain type="info" size="mini" @click="detail(row.cid)">
             详情
           </el-button>
-          <el-button size="mini" @click="edit()">
+          <el-button v-if="status==1" size="mini" @click="edit(row.cid)">
             编辑
           </el-button>
-          <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="status==1||status==2" plain size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
+          </el-button>
+          <el-button v-if="status==0" plain size="mini" type="success" @click="checkClub(row)">
+            允许
+          </el-button>
+          <el-button v-if="status==0" plain size="mini" type="danger" @click="checkClub(row)">
+            禁止
           </el-button>
         </template>
       </el-table-column>
-<!--      <el-table-column label="Actions" width="420px">-->
+<!--      <el-table-column label="Actions" width="300px">-->
 <!--        <template slot-scope="{row,$index}">-->
-<!--          <el-button plain type="info" size="mini" @click="Dialog(row.cid, flag='detail')">-->
+<!--          <el-button v-if="status==1||status==0" plain type="info" size="mini" @click="Dialog(row.cid, flag='detail')">-->
 <!--            详情-->
 <!--          </el-button>-->
-<!--          <el-button size="mini" @click="Dialog(row.cid, flag='edit')">-->
+<!--          <el-button v-if="status==1" size="mini" @click="Dialog(row.cid, flag='edit')">-->
 <!--            编辑-->
 <!--          </el-button>-->
-<!--          <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">-->
+<!--          <el-button v-if="status==1||status==2" plain size="mini" type="danger" @click="handleDelete(row,$index)">-->
 <!--            删除-->
+<!--          </el-button>-->
+<!--          <el-button v-if="status==0" plain size="mini" type="success" @click="checkClub(row)">-->
+<!--            允许-->
+<!--          </el-button>-->
+<!--          <el-button v-if="status==0" plain size="mini" type="danger" @click="checkClub(row)">-->
+<!--            禁止-->
 <!--          </el-button>-->
 <!--        </template>-->
 <!--      </el-table-column>-->
@@ -111,7 +83,7 @@
 </template>
 
 <script>
-import { clubList, delClub, searchClub } from '@/api/club'
+import { clubList, delClub } from '@/api/club'
 import dialogue from '@/views/users/dialogue'
 // import clubDialogue from '@/views/club/clubDialogue'
 
@@ -121,6 +93,16 @@ export default {
     dialogue
     // clubDialogue
   },
+  props: {
+    status: {
+      require: true,
+      type: [String, Number]
+    },
+    searchclub: {
+      require: false,
+      type: Array
+    }
+  },
   data() {
     return {
       clublist: [],
@@ -128,10 +110,9 @@ export default {
       cId: '',
       flag: '',
       title: '',
-      search: '',
       config: {
         title: '详情',
-        type: 'detail',
+        type: '',
         infoapi: {
           url: '/club/clubinfo',
           method: 'post',
@@ -139,8 +120,7 @@ export default {
         },
         updateapi: {
           url: '/club/rootupdateclub',
-          method: 'post',
-          data: {}
+          method: 'post'
         }
       },
       list: {
@@ -151,17 +131,22 @@ export default {
         createAt: ['创办时间', 'input'],
         introduction: ['简介', 'input'],
         file: ['申请材料', 'input'],
-        appImage: ['申请图片', 'img'],
+        appImage: ['社团Logo', 'img'],
         duty: ['值班表', 'input']
       }
     }
   },
   created() {
-    this.getList(1)
+    this.getList()
+  },
+  watch: {
+    searchclub() {
+      this.clublist = this.searchclub
+    }
   },
   methods: {
-    getList(appStatus) {
-      clubList({ appStatus: appStatus }).then(response => {
+    getList() {
+      clubList({ appStatus: this.status }).then(response => {
         const form = response.data
         console.log(form)
         this.clublist = response.data
@@ -179,14 +164,16 @@ export default {
       }
     },
     detail(id) {
-      // console.log('detail')
+      this.config.type = 'detail'
       this.config.infoapi.data = { cid: id }
-      // console.log(this.config.infoapi)
       this.dialogFormVisible = true
       this.$refs.flag.parentGetform()
     },
     edit(id) {
-      this.config.updateapi.data = { }
+      this.config.type = 'edit'
+      this.config.infoapi.data = { cid: id }
+      this.$refs.flag.parentGetform()
+      this.dialogFormVisible = true
     },
     handleDelete(row, index) {
       delClub({ cid: row.cid }).then(response => {
@@ -209,15 +196,7 @@ export default {
         this.getList()
       }
     },
-    handleSearch() {
-      searchClub({ cname: this.search }).then(response => {
-        console.log(response)
-        this.clublist = response.data
-      })
-    },
-    handleReset(search) {
-      this.getList(1)
-      this.search = ''
+    checkClub(row) {
     }
   }
 }
