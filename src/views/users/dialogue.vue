@@ -16,14 +16,19 @@
         />
         <el-upload
           v-if="$parent.config.type=='edit'&&item[1]=='img'"
-          action="#"
+          :action="action"
+          name="file"
+          ref="upload"
+          :http-request="uploads"
           list-type="picture-card"
-          :auto-upload="false">
+          :auto-upload="true"
+          multiple
+        >
           <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
+          <div slot="file" slot-scope="{file}" >
             <img
               class="el-upload-list__item-thumbnail"
-              :src="formArr[key]"
+              :src="file.url"
             >
             <span class="el-upload-list__item-actions">
             <span
@@ -49,6 +54,9 @@
           </span>
           </div>
         </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="formArr[key]">
         </el-dialog>
@@ -83,6 +91,7 @@ export default {
   // },
   data() {
     return {
+      action: process.env.VUE_APP_BASE_API + '/club/upload',
       formLabelWidth: '120px',
       formArr: {}, // 返回的数据
       dialogFormVisible: this.$parent.dialogFormVisible,
@@ -144,16 +153,16 @@ export default {
       apiName(this.$parent.config.infoapi).then(response => {
         // console.log('getForm', response.data)
         // const form = response.data.filter(item => item.cid === this.cId)
-        // const fileUrl = response.data.appImage.replace(/\\/g, '/').replace(/public/, '')
+        // const fileUrl = response.data.appImage.replace(/\\/g, '/')
         response.data['appImage'] = process.env.VUE_APP_BASE_API + '/' + response.data.appImage
-        console.log(response.data)
         this.formArr = response.data
       })
     },
     updateForm() {
+      console.log(this.formArr)
       this.$parent.config.updateapi.data = this.formArr
       apiName(this.$parent.config.updateapi).then(response => {
-        console.log(response.data)
+        console.log(this.$parent.config.updateapi)
         if (response.code === 20000) {
           this.$notify({
             title: 'Success',
@@ -161,7 +170,6 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.$parent.getList()
           this.$parent.dialogFormVisible = false
         }
       })
@@ -175,6 +183,29 @@ export default {
     },
     handleDownload(file) {
       console.log(file)
+    },
+    uploads() {
+      const formData = new FormData()
+      const file = this.$refs.upload[0].uploadFiles[0]
+      // console.log(file)
+      // console.log(file.raw)
+      // const headerConfig = { headers: { 'Content-Type': 'multipart/form-data' }}
+      if (!file) { // 若未选择文件
+        alert('请选择文件')
+        return
+      }
+      formData.append('file', file.raw)
+      apiName({
+        url: '/club/upload',
+        method: 'post',
+        data: formData,
+        uploadFile: true
+      }).then(response => {
+        // console.log(response)
+        this.formArr.appImage = response.data.path
+        // console.log(this.formArr.appImage)
+        // formData
+      })
     }
   }
 }

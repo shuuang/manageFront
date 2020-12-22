@@ -4,7 +4,7 @@
       :action="action"
       name="file"
       ref="upload"
-      :http-request="myupload"
+      :http-request="uploads"
       list-type="picture-card"
       :auto-upload="true"
       multiple
@@ -73,7 +73,8 @@ export default {
       apiName({
         url: '/club/upload',
         method: 'post',
-        data: file.raw
+        data: formData,
+        uploadFile: true
       }).then(response => {
         console.log(file.raw)
         console.log(response)

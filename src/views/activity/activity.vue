@@ -29,16 +29,29 @@
           <span>{{ row.endDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="350px">
+      <el-table-column label="活动状态" width="140">
+        <template slot-scope="{row}">
+          <el-tag v-show="row.astatus==0" type="info">审核中</el-tag>
+          <el-tag v-show="row.astatus==1" type="success">已通过</el-tag>
+          <el-tag v-show="row.astatus==2" type="warning">未通过</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="Actions" width="360px">
         <template slot-scope="{row,$index}">
-          <el-button plain type="info" size="mini" @click="Dialog(row.cid, flag='detail')">
+          <el-button v-if="row.astatus==1||row.astatus==0" plain type="info" size="mini" @click="detail(row.aid)">
             详情
           </el-button>
-          <el-button size="mini" @click="Dialog(row.cid, flag='edit')">
+          <el-button v-if="row.astatus==1" size="mini" @click="edit(row.aid)">
             编辑
           </el-button>
-          <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.astatus==2||row.astatus==1" plain size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
+          </el-button>
+          <el-button v-if="row.astatus==0" plain size="mini" type="success" @click="checkClub(row.aid, 1)">
+            允许
+          </el-button>
+          <el-button v-if="row.astatus==0" plain size="mini" type="danger" @click="checkClub(row.aid,2)">
+            禁止
           </el-button>
         </template>
       </el-table-column>
@@ -47,10 +60,20 @@
 </template>
 
 <script>
-import { rootActivityList, delActivity } from '@/api/activity'
+import { rootActivityList, delActivity,checkActivity } from '@/api/activity'
 
 export default {
   name: 'Activity',
+  props: {
+    status: {
+      require: true,
+      type: [String, Number]
+    },
+    searchclub: {
+      require: false,
+      type: Array
+    }
+  },
   data() {
     return {
       activitylist: []
@@ -59,9 +82,14 @@ export default {
   created() {
     this.getList()
   },
+  watch: {
+    searchclub() {
+      this.clublist = this.searchclub
+    }
+  },
   methods: {
     getList() {
-      rootActivityList().then(response => {
+      rootActivityList({ astatus: this.status }).then(response => {
         const form = response.data
         console.log(form)
         this.activitylist = response.data
@@ -79,6 +107,18 @@ export default {
           })
           this.activitylist.splice(index, 1)
         }
+      })
+    },
+    checkClub(id, status) {
+      console.log(id, status)
+      checkActivity({ aid: id, astatus: status }).then(response => {
+        this.$notify({
+          title: 'Success',
+          message: 'check Successfully',
+          type: 'success',
+          duration: 2000
+        })
+        this.getList()
       })
     }
   }

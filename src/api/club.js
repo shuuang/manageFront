@@ -36,3 +36,26 @@ export function clubInfo(data) {
     data: data
   })
 }
+export function checkAppClub(data) {
+  return request({
+    url: '/club/checkappclub',
+    method: 'get',
+    params: data
+  })
+}
+// 添加社团add
+export function addClub(data) {
+  return request({
+    url: '/club/rootaddclub',
+    method: 'post',
+    data: data
+  })
+}
+export function upload(data) {
+  return request({
+    url: '/club/upload',
+    method: 'post',
+    data: data,
+    uploadFile: true
+  })
+}

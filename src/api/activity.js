@@ -14,3 +14,10 @@ export function delActivity(data) {
     params: data
   })
 }
+export function checkActivity(data) {
+  return request({
+    url: '/activity/checkactivity',
+    method: 'post',
+    data: data
+  })
+}

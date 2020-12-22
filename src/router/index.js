@@ -171,18 +171,18 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-  // {
-  //   path: '/icon',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/icons/index'),
-  //       name: 'Icons',
-  //       meta: { title: 'Icons', icon: 'icon', noCache: true }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/icon',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
+        meta: { title: 'Icons', icon: 'icon', noCache: true }
+      }
+    ]
+  },
   // 用户列表
   {
     path: '/user',
@@ -192,7 +192,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/users/users'),
         name: 'Icons',
-        meta: { title: '用户', icon: 'peoples', noCache: true }
+        meta: { title: '用户', icon: 'user', noCache: true }
       }
     ]
   },
@@ -203,9 +203,22 @@ export const asyncRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/club/filetest'),
+        component: () => import('@/views/club/clubtab'),
         name: 'Icons',
         meta: { title: '社团', icon: 'tree-table', noCache: true }
+      }
+    ]
+  },
+  // 社团成员列表
+  {
+    path: '/clubuser',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/clubuser/clubuser'),
+        name: 'Icons',
+        meta: { title: '社团成员', icon: 'peoples', noCache: true }
       }
     ]
   },
@@ -219,6 +232,18 @@ export const asyncRoutes = [
         component: () => import('@/views/activity/activitytab'),
         name: 'Icons',
         meta: { title: '活动', icon: 'el-icon-s-flag', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/img',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/club/filetest'),
+        name: 'Icons',
+        meta: { title: '图片测试', icon: 'el-icon-s-flag', noCache: true }
       }
     ]
   }
