@@ -21,3 +21,34 @@ export function checkActivity(data) {
     data: data
   })
 }
+// 查询活动信息
+export function activityInfo(data) {
+  return request({
+    url: '/activity/detailactivity',
+    method: 'get',
+    params: data
+  })
+}
+export function updateActivity(data) {
+  return request({
+    url: '/activity/updateactivity',
+    method: 'post',
+    data: data
+  })
+}
+export function addActivity(data) {
+  return request({
+    url: '/activity/addactivity',
+    method: 'post',
+    data: data
+  })
+}
+// 查询社联发布的
+export function publishActivity(data) {
+  return request({
+    url: '/activity/activitylist',
+    method: 'get',
+    params: data
+  })
+}
+

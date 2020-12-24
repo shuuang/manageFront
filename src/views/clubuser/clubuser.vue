@@ -9,25 +9,22 @@
           <span>{{ row.cuid }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户ID" prop="uid">
+      <el-table-column label="用户" prop="uid">
         <template slot-scope="{row}">
           <span>{{ row.uid }}</span>
 <!--          <span>{{ getUserName(row, $index) }}</span>-->
         </template>
       </el-table-column>
-      <el-table-column label="社团ID" prop="cid" width="120">
+      <el-table-column label="社团" prop="cid" width="120">
         <template slot-scope="{row}">
           <span>{{ row.cid }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="社团权限" prop="privilege" width="80">
+      <el-table-column label="职位" prop="privilege" width="180">
         <template slot-scope="{row}">
-          <span>{{ row.privilege }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="社团成员状态" prop="uid" width="180">
-        <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <span v-if="row.privilege==0">社员</span>
+          <span v-if="row.privilege==1">部长</span>
+          <span v-if="row.privilege==2">社长</span>
         </template>
       </el-table-column>
       <el-table-column label="加入年份" prop="uid" width="180">
@@ -54,7 +51,7 @@
 <!--          </el-button>-->
 <!--        </template>-->
 <!--      </el-table-column>-->
-      <el-table-column label="Actions" width="300px">
+      <el-table-column label="操作" width="300px">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="setPre(row.cuid)">
             设为社长
@@ -66,8 +63,7 @@
 </template>
 
 <script>
-import { allClubUser } from '@/api/clubuser'
-import { rootUser } from '@/api/myuser'
+import { allClubUser, setPre } from '@/api/clubuser'
 
 export default {
   name: 'Club',
@@ -85,22 +81,26 @@ export default {
       // console.log(await this.getUserName(17))
       allClubUser().then(response => {
         // const form = response.data
-        // response.data.forEach(item => {
-        //   this.getUserName(item.uid)
-        // })
+        response.data.forEach(item => {
+          item.uid = item.users.realname
+          item.cid = item.club.cname
+        })
+        // console.log(response.data)
+        // response.data.uid = response.data
+        // this.clubuserlist.uid = response.data.users.realname
         this.clubuserlist = response.data
       })
     },
-    getUserName(row, index) {
-      // console.log(index)
-      rootUser({ uid: row.uid }).then(res => {
-        this.name.push(res.data.realname)
-        console.log(this.name[0])
+    setPre(id) {
+      setPre({ cuid: id }).then(response => {
+        this.$notify({
+          title: 'Success',
+          message: 'Set Successfully',
+          type: 'success',
+          duration: 2000
+        })
+        this.getList()
       })
-      console.log(this.name[0])
-      return this.name[0]
-    },
-    setPre() {
     }
   }
 }

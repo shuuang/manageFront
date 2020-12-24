@@ -41,7 +41,7 @@
       </el-button>
     </div>
     <el-tabs type="border-card">
-      <el-tab-pane label="社团">
+      <el-tab-pane label="活动">
         <club ref="reset" :status="status=1" :searchclub="searchclub"></club>
       </el-tab-pane>
       <el-tab-pane label="审核中">

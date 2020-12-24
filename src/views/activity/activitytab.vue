@@ -5,12 +5,11 @@
         v-model="search"
         size="small"
         placeholder="search"
-        style="width: 90%;margin-right: 15px"
+        style="width: 82%;margin-right: 15px"
         class="filter-item"
         @keyup.enter.native="handleSearch(search)"
       />
       <el-button
-        v-waves
         class="filter-item"
         size="small"
         type="primary"
@@ -20,7 +19,6 @@
         搜索
       </el-button>
       <el-button
-        v-waves
         class="filter-item"
         size="small"
         type="primary"
@@ -28,6 +26,15 @@
         @click="handleReset(search)"
       >
         重置
+      </el-button>
+      <el-button
+        class="filter-item"
+        size="small"
+        type="primary"
+        icon="el-icon-search"
+        @click="Dialog('edit')"
+      >
+        发布活动
       </el-button>
     </div>
     <el-tabs type="border-card">
@@ -41,22 +48,30 @@
         <acitivity :status="status=2"></acitivity>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
+      <!--      <dialogue ref="flag"></dialogue>-->
+      <adialogue :flag="flag" :a-id="aId" @close-dialogue="closeDialogue" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import acitivity from '@/views/activity/activity'
 import { searchClub } from '@/api/club'
+import adialogue from '@/views/activity/activityDialogue'
 
 export default {
   name: "activityTab",
   components: {
-    acitivity
+    acitivity,
+    adialogue
   },
   data() {
     return {
       status: '',
       search: '',
+      aId: '',
+      dialogFormVisible: false,
       searchclub: []
     }
   },
@@ -70,6 +85,18 @@ export default {
     handleReset(search) {
       this.$refs.reset.getList()
       this.search = ''
+    },
+    Dialog(flag) {
+      this.dialogFormVisible = true
+      this.flag = flag
+      this.title = '发布活动'
+    },
+    closeDialogue(payload) {
+      console.log('payload', payload)
+      this.dialogFormVisible = false
+      if (!payload) {
+        this.getList()
+      }
     }
   }
 }

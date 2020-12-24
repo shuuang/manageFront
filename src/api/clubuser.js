@@ -7,3 +7,10 @@ export function allClubUser(data) {
     params: data
   })
 }
+export function setPre(data) {
+  return request({
+    url: '/clubuser/setpresident',
+    method: 'get',
+    params: data
+  })
+}

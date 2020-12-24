@@ -235,6 +235,19 @@ export const asyncRoutes = [
       }
     ]
   },
+  // 活动报名列表
+  {
+    path: '/publish',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/publishActivity/publishActivity'),
+        name: 'Icons',
+        meta: { title: '活动报名管理', icon: 'el-icon-s-check', noCache: true }
+      }
+    ]
+  },
   {
     path: '/img',
     component: Layout,

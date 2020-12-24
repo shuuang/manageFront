@@ -38,10 +38,10 @@
       </el-table-column>
       <el-table-column label="Actions" width="360px">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.astatus==1||row.astatus==0" plain type="info" size="mini" @click="detail(row.aid)">
+          <el-button v-if="row.astatus==1||row.astatus==0" plain type="info" size="mini" @click="Dialog(row.aid, 'detail')">
             详情
           </el-button>
-          <el-button v-if="row.astatus==1" size="mini" @click="edit(row.aid)">
+          <el-button v-if="row.astatus==1" size="mini" @click="Dialog(row.aid, 'edit')">
             编辑
           </el-button>
           <el-button v-if="row.astatus==2||row.astatus==1" plain size="mini" type="danger" @click="handleDelete(row,$index)">
@@ -56,14 +56,21 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
+      <activity-dialogue :flag="flag" :a-id="aId" @close-dialogue="closeDialogue" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { rootActivityList, delActivity,checkActivity } from '@/api/activity'
+import { rootActivityList, delActivity, checkActivity } from '@/api/activity'
+import activityDialogue from '@/views/activity/activityDialogue'
 
 export default {
   name: 'Activity',
+  components: {
+    activityDialogue
+  },
   props: {
     status: {
       require: true,
@@ -76,7 +83,9 @@ export default {
   },
   data() {
     return {
-      activitylist: []
+      activitylist: [],
+      dialogFormVisible: false,
+      title: ''
     }
   },
   created() {
@@ -120,6 +129,24 @@ export default {
         })
         this.getList()
       })
+    },
+    Dialog(id, flag) {
+      this.dialogFormVisible = true
+      this.aId = id
+      this.flag = flag
+      if (flag === 'detail') {
+        this.title = '活动详情'
+      }
+      if (flag === 'edit') {
+        this.title = '活动编辑'
+      }
+    },
+    closeDialogue(payload) {
+      // console.log('payload', payload)
+      this.dialogFormVisible = false
+      if (!payload) {
+        this.getList()
+      }
     }
   }
 }
