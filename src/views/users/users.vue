@@ -77,6 +77,9 @@
           <el-button size="mini" @click="Dialog(row.uid, flag='edit')">
             编辑
           </el-button>
+          <el-button size="mini" type="warning" @click="Dialog(row.uid, flag='repwd')">
+            修改密码
+          </el-button>
           <el-button plain size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
@@ -239,6 +242,9 @@ export default {
       }
       if (flag === 'edit') {
         this.title = '用户编辑'
+      }
+      if (flag === 'repwd') {
+        this.title = '修改密码'
       }
     },
     handleDelete(row, index) {

@@ -187,6 +187,9 @@ export const asyncRoutes = [
   {
     path: '/user',
     component: Layout,
+    meta: {
+      roles: ['admin']
+    },
     children: [
       {
         path: 'index',
@@ -200,6 +203,9 @@ export const asyncRoutes = [
   {
     path: '/club',
     component: Layout,
+    meta: {
+      roles: ['admin']
+    },
     children: [
       {
         path: 'index',
@@ -213,6 +219,9 @@ export const asyncRoutes = [
   {
     path: '/clubuser',
     component: Layout,
+    meta: {
+      roles: ['admin']
+    },
     children: [
       {
         path: 'index',
@@ -226,6 +235,9 @@ export const asyncRoutes = [
   {
     path: '/activity',
     component: Layout,
+    meta: {
+      roles: ['admin']
+    },
     children: [
       {
         path: 'index',
@@ -244,7 +256,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/publishActivity/publishActivity'),
         name: 'Icons',
-        meta: { title: '活动报名管理', icon: 'el-icon-s-check', noCache: true }
+        meta: { title: '活动报名', icon: 'el-icon-s-check', noCache: true }
       }
     ]
   },
@@ -257,6 +269,22 @@ export const asyncRoutes = [
         component: () => import('@/views/club/filetest'),
         name: 'Icons',
         meta: { title: '图片测试', icon: 'el-icon-s-flag', noCache: true }
+      }
+    ]
+  },
+  // 已加社团
+  {
+    path: '/userclub',
+    component: Layout,
+    meta: {
+      roles: ['editor']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/userclub/userclub'),
+        name: 'Icons',
+        meta: { title: '已加社团', icon: 'el-icon-menu', noCache: true }
       }
     ]
   }

@@ -19,9 +19,9 @@
           <span>{{ row.teacher }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="社长" prop="uid" width="80">
+      <el-table-column label="社长" prop="realname" width="160">
         <template slot-scope="{row}">
-          <span>{{ row.uid }}</span>
+          <span>{{ row.users.realname }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="uid" width="180">

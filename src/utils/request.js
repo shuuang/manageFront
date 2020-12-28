@@ -18,10 +18,10 @@ service.interceptors.request.use(
     // do something before request is sent
     // config.headers['Content-Type'] = false
     // config.headers['Content-Type'] = 'multipart/form-data'
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    if (!config.uploadFile) {
-      config.data = qs.stringify({ ...config.data })
-    }
+    // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    // if (!config.uploadFile) {
+    //   config.data = qs.stringify({ ...config.data })
+    // }
     // config.data = qs.stringify({ ...config.data })
     if (store.getters.token) {
       // let each request carry token

@@ -37,3 +37,19 @@ export function searchUser(data) {
     data: data
   })
 }
+
+export function addRoot(data) {
+  return request({
+    url: '/users/addroot',
+    method: 'post',
+    data: data
+  })
+}
+
+export function rootrePwd(data) {
+  return request({
+    url: '/users/rootrepwd',
+    method: 'post',
+    data: data
+  })
+}

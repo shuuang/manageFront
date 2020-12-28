@@ -1,6 +1,11 @@
 <template>
   <div class="usersDialogue">
-    <el-form :model="form" size="mini">
+    <el-form v-if="flag==='repwd'">
+      <el-form-item label="设置新密码" label-width="100px">
+        <el-input v-model="password" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+    <el-form v-else :model="form" size="mini">
       <el-form-item v-if="flag=='detail'" label="用户" :label-width="formLabelWidth">
         <span v-if="form.role==0">非社联成员</span>
         <span v-else>社联成员</span>
@@ -64,13 +69,14 @@
     </el-form>
     <div slot="footer" class="dialog-footer" align="right">
       <el-button size="mini" @click="back">取 消</el-button>
-      <el-button size="mini" type="primary" @click="getEdit()">确 定</el-button>
+      <el-button size="mini" v-if="flag==='repwd'" type="primary" @click="rePwd()">确 定</el-button>
+      <el-button size="mini" v-else type="primary" @click="getEdit()">确 定</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { rootUser, rootUpdate } from '@/api/myuser'
+import { rootUser, rootUpdate, addRoot, rootrePwd } from '@/api/myuser'
 
 export default {
   name: 'UsersDialogue',
@@ -101,6 +107,7 @@ export default {
         home: '',
         nation: ''
       },
+      password: '',
       formLabelWidth: '80px'
     }
   },
@@ -127,6 +134,14 @@ export default {
       })
     },
     getEdit() {
+      addRoot({ uid: this.uId, role: this.form.role }).then(response => {
+        this.$notify({
+          title: 'Success',
+          message: 'role update Successfully',
+          type: 'success',
+          duration: 2000
+        })
+      })
       rootUpdate(this.form).then(response => {
         console.log('getedit', response)
         console.log(this.form)
@@ -143,6 +158,19 @@ export default {
     },
     back() {
       this.$emit('close-dialogue', false)
+    },
+    rePwd() {
+      rootrePwd({ uid: this.uId, password: this.password }).then(response => {
+        if (response.code === 20000) {
+          this.$notify({
+            title: 'Success',
+            message: 'change password Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.$emit('close-dialogue', false)
+        }
+      })
     }
   }
 }

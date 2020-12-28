@@ -7,28 +7,45 @@
       </el-form-item>
       <el-form-item label="开始时间" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.startDate }}</span>
-        <el-input v-else v-model="form.startDate" autocomplete="off" />
+        <div v-else class="block">
+          <el-date-picker
+            v-model="form.startDate"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
+        </div>
       </el-form-item>
       <el-form-item label="结束时间" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.endDate }}</span>
-        <el-input v-else v-model="form.endDate" autocomplete="off" />
+        <div v-else class="block">
+          <el-date-picker
+            v-model="form.endDate"
+            value-format="yyyy-MM-dd"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
+        </div>
       </el-form-item>
       <el-form-item label="活动简介" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.aIntroduction }}</span>
         <el-input v-else v-model="form.aIntroduction" autocomplete="off" />
       </el-form-item>
       <el-form-item label="社团" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.cid }}</span>
-        <el-input v-else autosize v-model="form.cid" autocomplete="off" />
+        <span v-if="flag==='detail'">{{ form.club.cname }}</span>
+        <el-input v-else autosize v-model="form.club.cname" autocomplete="off" />
       </el-form-item>
       <el-form-item label="活动地点" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.location }}</span>
         <el-input v-else v-model="form.location" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="创办单位" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.department }}</span>
-        <el-input v-else v-model="form.department" autocomplete="off" />
+      <el-form-item v-if="flag==='detail'" label="创办单位" :label-width="formLabelWidth">
+        <span v-if="form.department==0">社联</span>
+        <span v-if="form.department==1">社团</span>
       </el-form-item>
+<!--      <el-form-item v-if="flag==='edit'" label="创办单位" :label-width="formLabelWidth">-->
+<!--        <span>{{ form.department }}</span>-->
+<!--        <el-input v-model="form.department" autocomplete="off" />-->
+<!--      </el-form-item>-->
 <!--      <el-form-item label="相关" :label-width="formLabelWidth">-->
 <!--        <el-image-->
 <!--          v-if="flag==='detail'"-->
@@ -80,10 +97,10 @@
 <!--          <img width="100%" :src="dialogImageUrl" alt="">-->
 <!--        </el-dialog>-->
 <!--      </el-form-item>-->
-      <el-form-item label="活动状态" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.astatus }}</span>
-        <el-input v-else v-model="form.astatus" autocomplete="off" />
-      </el-form-item>
+<!--      <el-form-item label="活动状态" :label-width="formLabelWidth">-->
+<!--        <span v-if="flag==='detail'">{{ form.astatus }}</span>-->
+<!--        <el-input v-else v-model="form.astatus" autocomplete="off" />-->
+<!--      </el-form-item>-->
     </el-form>
     <div slot="footer" class="dialog-footer" align="right">
       <el-button size="mini" @click="back()">取 消</el-button>
@@ -136,7 +153,7 @@ export default {
         // console.log(response.data)
         // response.data.appImage = process.env.VUE_APP_BASE_API + '/' + response.data.appImage
         // this.form['appImage'] = 'http://127.0.0.1:3000' + fileUrl
-        console.log(response)
+        // console.log(response)
         this.form = response.data
       })
     },

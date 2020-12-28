@@ -4,27 +4,27 @@
       :data="activitylist"
       style="width: 100%"
     >
-      <el-table-column label="活动ID" prop="cid" width="80">
+      <el-table-column label="活动ID" prop="aid" width="80">
         <template slot-scope="{row}">
           <span>{{ row.aid }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动名称" prop="cname">
+      <el-table-column label="活动名称" prop="aName">
         <template slot-scope="{row}">
           <span>{{ row.aName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创办社团" prop="teacher" width="120">
+      <el-table-column label="创办社团" prop="cname" width="120">
         <template slot-scope="{row}">
-          <span>{{ row.cid }}</span>
+          <span>{{ row.club.cname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="开始时间" prop="uid" width="180">
+      <el-table-column label="开始时间" prop="startDate" width="180">
         <template slot-scope="{row}">
           <span>{{ row.startDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" prop="uid" width="180">
+      <el-table-column label="结束时间" prop="endDate" width="180">
         <template slot-scope="{row}">
           <span>{{ row.endDate }}</span>
         </template>
@@ -56,7 +56,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="25%">
       <activity-dialogue :flag="flag" :a-id="aId" @close-dialogue="closeDialogue" />
     </el-dialog>
   </div>
