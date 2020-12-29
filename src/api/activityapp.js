@@ -8,3 +8,21 @@ export function listForActivity(data) {
     params: data
   })
 }
+
+// 根据活动和社团查询报名社团
+export function appStatusList(data) {
+  return request({
+    url: '/activitysign/activityappstatus',
+    method: 'get',
+    params: data
+  })
+}
+
+// 社长报名活动
+export function signActivity(data) {
+  return request({
+    url: '/activitysign/signactivity',
+    method: 'post',
+    data: data
+  })
+}

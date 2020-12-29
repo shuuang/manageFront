@@ -5,7 +5,7 @@
         v-model="search"
         size="small"
         placeholder="search"
-        style="width: 85%;margin-right: 15px"
+        style="width: 80%;margin-right: 15px"
         class="filter-item"
         @keyup.enter.native="handleSearch(search)"
       />

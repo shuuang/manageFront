@@ -51,12 +51,4 @@ export function publishActivity(data) {
     params: data
   })
 }
-// 社长报名活动
-export function signActivity(data) {
-  return request({
-    url: '/activity/signactivity',
-    method: 'post',
-    data: data
-  })
-}
 

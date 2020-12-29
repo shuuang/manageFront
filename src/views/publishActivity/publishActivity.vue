@@ -41,13 +41,16 @@
           <el-button plain v-if="checkPermission(['admin'])" type="info" size="mini" @click="appClub(row.aid)">
             查看报名社团
           </el-button>
-          <el-button plain v-if="checkPermission(['editor'])" type="info" size="mini" @click="appActivity(row.aid)">
+          <el-button plain v-if="checkPermission(['editor'])" type="info" size="mini" @click="Dialog(row.aid, 'sign')">
             报名
+          </el-button>
+          <el-button plain v-if="checkPermission(['editor'])" size="mini" @click="Dialog(row.aid, 'status')">
+            状态
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="34%">
       <el-table
         :data="appclub"
         style="width: 100%">
@@ -78,12 +81,32 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+    <el-dialog :title="title" :visible.sync="signStatus" width="30%">
+      <el-form label-width="80px" :model="appactivity">
+        <el-form-item label="社团">
+          <el-input v-model="appactivity.cid"></el-input>
+        </el-form-item>
+        <el-form-item label="报名人">
+          <el-input v-model="appactivity.aaName"></el-input>
+        </el-form-item>
+        <el-form-item label="联系方式">
+          <el-input v-model="appactivity.aaConnect"></el-input>
+        </el-form-item>
+        <el-form-item label="文件">
+          <el-input v-model="appactivity.aafile"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer" align="right">
+        <el-button size="mini" @click="back()">取 消</el-button>
+        <el-button size="mini" type="primary" @click="appActivity()">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { publishActivity } from '@/api/activity'
-import { listForActivity } from '@/api/activityapp'
+import { listForActivity, signActivity } from '@/api/activityapp'
 import checkPermission from "@/utils/permission";
 
 export default {
@@ -91,8 +114,16 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
+      signStatus: false,
       activityapplist: [],
-      appclub: []
+      appclub: [],
+      appactivity: {
+        cid: '',
+        aaName: '',
+        aaConnect: '',
+        aafile: '',
+        aid: ''
+      }
     }
   },
   created() {
@@ -109,11 +140,43 @@ export default {
     appClub(aid) {
       this.title = '活动报名社团'
       this.dialogFormVisible = true
-      console.log('press')
+      // console.log('press')
       listForActivity({ aid: aid }).then(response => {
         this.appclub = response.data
         console.log(this.appclub)
       })
+    },
+    Dialog(aid, tag) {
+      if (tag === 'sign') {
+        this.title = '活动报名'
+        this.signStatus = true
+        this.appactivity.aid = aid
+      }
+      if (tag === 'status') {
+        this.title = '报名状态'
+        this.dialogFormVisible = true
+        this.appactivity.aid = aid
+      }
+      console.log(aid)
+    },
+    appActivity() {
+      console.log(this.appactivity)
+      signActivity(this.appactivity).then(response => {
+        // console.log(response)
+        if (response.code === 20000) {
+          this.$notify({
+            title: 'Success',
+            message: 'Sign Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.signStatus = false
+        }
+      })
+    },
+    back() {
+      this.dialogFormVisible = false
+      this.signStatus = false
     }
   }
 }
