@@ -7,7 +7,7 @@
       </el-form-item>
       <el-form-item label="社长" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.users.realname }}</span>
-<!--        <el-input v-else v-model="form.users.realname" autocomplete="off" />-->
+        <el-input v-else v-model="form.users.realname" autocomplete="off" />
       </el-form-item>
       <el-form-item label="指导老师" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.teacher }}</span>
@@ -15,12 +15,13 @@
       </el-form-item>
       <el-form-item label="创建时间" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.createAt }}</span>
-<!--        <el-date-picker-->
-<!--          v-model="form.createAt"-->
-<!--          value-format="yyyy-MM-dd"-->
-<!--          type="date"-->
-<!--          placeholder="选择日期">-->
-<!--        </el-date-picker>-->
+        <el-date-picker
+          v-else
+          v-model="form.createAt"
+          value-format="yyyy-MM-dd"
+          type="date"
+          placeholder="选择日期">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="简介" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.introduction }}</span>
@@ -28,11 +29,11 @@
       </el-form-item>
       <el-form-item label="社团Logo" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.img }}</span>
-<!--        <el-input v-else v-model="form.img" autocomplete="off" />-->
+        <el-input v-else v-model="form.img" autocomplete="off" />
       </el-form-item>
       <el-form-item label="申请材料" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.file }}</span>
-<!--        <el-input v-else v-model="form.file" autocomplete="off" />-->
+        <el-input v-else v-model="form.file" autocomplete="off" />
       </el-form-item>
       <el-form-item label="申请照片" :label-width="formLabelWidth">
         <el-image
@@ -87,7 +88,7 @@
       </el-form-item>
       <el-form-item label="值班表" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.duty }}</span>
-<!--        <el-input v-else v-model="form.duty" autocomplete="off" />-->
+        <el-input v-else v-model="form.duty" autocomplete="off" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" align="right">
@@ -128,7 +129,10 @@ export default {
         file: '',
         duty: '',
         appImage: '',
-        appStatus: ''
+        appStatus: '',
+        users: [
+          { realname: '' }
+        ]
       },
       formLabelWidth: '80px',
       dialogImageUrl: '',

@@ -40,18 +40,18 @@
         添加
       </el-button>
     </div>
-    <el-tabs type="border-card">
-      <el-tab-pane label="社团">
-        <club ref="reset" :status="status=1" :searchclub="searchclub"></club>
+    <el-tabs v-model="elrefesh" type="border-card">
+      <el-tab-pane type="button" label="社团" name="1">
+        <club ref="club" :status="status=elrefesh" :searchclub="searchclub" />
       </el-tab-pane>
-      <el-tab-pane label="审核中">
-        <club :status="status=0"></club>
+      <el-tab-pane label="审核中" name="0">
+        <club ref="audit" :status="status=elrefesh" />
       </el-tab-pane>
-      <el-tab-pane label="审核失败">
-        <club :status="status=2"></club>
+      <el-tab-pane label="审核失败" name="2">
+        <club ref="refuse" :status="status=elrefesh" />
       </el-tab-pane>
     </el-tabs>
-<!--    <dialogue ref="flag"></dialogue>-->
+    <!--    <dialogue ref="flag"></dialogue>-->
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
       <!--      <dialogue ref="flag"></dialogue>-->
       <club-dialogue :flag="flag" :c-id="cId" @close-dialogue="closeDialogue" />
@@ -61,22 +61,29 @@
 
 <script>
 import club from '@/views/club/club'
+
+import Waves from '@/components/directive/waves'
 // import dialogue from '@/views/users/dialogue'
 import { searchClub } from '@/api/club'
 import clubDialogue from '@/views/club/clubDialogue'
 
 export default {
-  name: "clubTab",
+  name: 'ClubTab',
   components: {
     club,
     // dialogue
     clubDialogue
   },
+  directives: { Waves },
   data() {
     return {
+      title: '',
+      flag: '',
+      cId: 0,
       status: '',
       search: '',
       searchclub: [],
+      elrefesh: '1',
       dialogFormVisible: false,
       config: {
         title: '添加社团',
@@ -96,6 +103,21 @@ export default {
         file: ['申请材料', 'input'],
         appImage: ['社团Logo', 'img'],
         duty: ['值班表', 'input']
+      }
+    }
+  },
+  watch: {
+    elrefresh() {
+      switch (this.elrefesh) {
+        case '1':
+          this.$refs.club.getList()
+          break
+        case '2':
+          this.$refs.refuse.getList()
+          break
+        case '0':
+          this.$refs.audit.getList()
+          break
       }
     }
   },

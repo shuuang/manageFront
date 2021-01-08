@@ -183,6 +183,19 @@ export const asyncRoutes = [
       }
     ]
   },
+  // 个人信息修改
+  {
+    path: '/userInfo',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
+        meta: { title: '个人信息', icon: 'icon', noCache: true }
+      }
+    ]
+  },
   // 用户列表
   {
     path: '/user',
@@ -260,19 +273,19 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
-    path: '/img',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/club/filetest'),
-        name: 'Icons',
-        meta: { title: '图片测试', icon: 'el-icon-s-flag', noCache: true }
-      }
-    ]
-  },
-  // 已加社团
+  // {
+  //   path: '/img',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/club/filetest'),
+  //       name: 'Icons',
+  //       meta: { title: '图片测试', icon: 'el-icon-s-flag', noCache: true }
+  //     }
+  //   ]
+  // },
+  // 社团成员
   {
     path: '/userclub',
     component: Layout,
@@ -284,7 +297,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/userclub/userclub'),
         name: 'Icons',
-        meta: { title: '已加社团', icon: 'el-icon-menu', noCache: true }
+        meta: { title: '社团管理', icon: 'el-icon-menu', noCache: true }
       }
     ]
   }

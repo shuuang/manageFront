@@ -41,12 +41,12 @@
           <el-button plain v-if="checkPermission(['admin'])" type="info" size="mini" @click="appClub(row.aid)">
             查看报名社团
           </el-button>
-          <el-button plain v-if="checkPermission(['editor'])" type="info" size="mini" @click="Dialog(row.aid, 'sign')">
+          <el-button plain v-if="checkPermission(['editor'])&&row.department == 1" type="info" size="mini" @click="Dialog(row.aid, 'sign')">
             报名
           </el-button>
-          <el-button plain v-if="checkPermission(['editor'])" size="mini" @click="Dialog(row.aid, 'status')">
-            状态
-          </el-button>
+<!--          <el-button plain v-if="checkPermission(['editor'])" size="mini" @click="Dialog(row.aid, 'status')">-->
+<!--            状态-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -81,10 +81,18 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <el-dialog :title="title" :visible.sync="signStatus" width="30%">
-      <el-form label-width="80px" :model="appactivity">
+    <el-dialog :title="title" :visible.sync="signStatus" width="30%" >
+      <el-form label-width="80px" :model="appactivity" size="mini">
         <el-form-item label="社团">
-          <el-input v-model="appactivity.cid"></el-input>
+<!--          <el-input v-model="appactivity.cid"></el-input>-->
+          <el-select v-model="appactivity.cid" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.cid"
+              :label="item.cname"
+              :value="item.cid">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="报名人">
           <el-input v-model="appactivity.aaName"></el-input>
@@ -105,9 +113,10 @@
 </template>
 
 <script>
-import { publishActivity } from '@/api/activity'
+import { publishActivity, clubActivity } from '@/api/activity'
 import { listForActivity, signActivity } from '@/api/activityapp'
-import checkPermission from "@/utils/permission";
+import { userClub } from '@/api/clubuser'
+import checkPermission from '@/utils/permission'
 
 export default {
   name: "publishActivity",
@@ -117,24 +126,42 @@ export default {
       signStatus: false,
       activityapplist: [],
       appclub: [],
+      options: [],
       appactivity: {
         cid: '',
         aaName: '',
         aaConnect: '',
         aafile: '',
         aid: ''
-      }
+      },
+      title: ''
     }
   },
   created() {
     this.getList()
+    this.getUserClub()
   },
   methods: {
     checkPermission,
     getList() {
+      // if (checkPermission(['editor'])) {
+      //   // clubActivity().then()
+      //   console.log('获取本社团的活动列表，操作按钮也需要改')
+      // }
       publishActivity().then(response => {
         console.log('list', response)
         this.activityapplist = response.data
+      })
+    },
+    getUserClub() {
+      userClub().then(response => {
+        console.log(response)
+        response.data.forEach(item => {
+          this.options.push({
+            cid: item.cid,
+            cname: item.club.cname
+          })
+        })
       })
     },
     appClub(aid) {
@@ -143,7 +170,7 @@ export default {
       // console.log('press')
       listForActivity({ aid: aid }).then(response => {
         this.appclub = response.data
-        console.log(this.appclub)
+        // console.log(this.appclub)
       })
     },
     Dialog(aid, tag) {
@@ -170,6 +197,13 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.appactivity = {
+            cid: '',
+            aaName: '',
+            aaConnect: '',
+            aafile: '',
+            aid: ''
+          }
           this.signStatus = false
         }
       })
@@ -177,6 +211,13 @@ export default {
     back() {
       this.dialogFormVisible = false
       this.signStatus = false
+      this.appactivity = {
+        cid: '',
+        aaName: '',
+        aaConnect: '',
+        aafile: '',
+        aid: ''
+      }
     }
   }
 }

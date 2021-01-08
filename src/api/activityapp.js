@@ -26,3 +26,12 @@ export function signActivity(data) {
     data: data
   })
 }
+
+// 社长取消报名
+export function delSign(data) {
+  return request({
+    url: '/activitysign/delsign',
+    method: 'get',
+    params: data
+  })
+}

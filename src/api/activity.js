@@ -43,10 +43,34 @@ export function addActivity(data) {
     data: data
   })
 }
+// 社团申请活动
+export function appActivity(data) {
+  return request({
+    url: '/activity/appactivity',
+    method: 'post',
+    data: data
+  })
+}
 // 查询社联发布的
 export function publishActivity(data) {
   return request({
     url: '/activity/activitylist',
+    method: 'get',
+    params: data
+  })
+}
+// 查询本社团活动
+export function clubActivityList(data) {
+  return request({
+    url: '/activity/clubactivitylist',
+    method: 'get',
+    params: data
+  })
+}
+// 查询本社团活动
+export function clubActivity(data) {
+  return request({
+    url: '/activity/clubactivitylist',
     method: 'get',
     params: data
   })

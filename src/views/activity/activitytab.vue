@@ -72,7 +72,9 @@ export default {
       search: '',
       aId: '',
       dialogFormVisible: false,
-      searchclub: []
+      searchclub: [],
+      title: '',
+      flag: ''
     }
   },
   methods: {

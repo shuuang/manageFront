@@ -85,7 +85,9 @@ export default {
     return {
       activitylist: [],
       dialogFormVisible: false,
-      title: ''
+      title: '',
+      aId: '',
+      flag: ''
     }
   },
   created() {

@@ -14,41 +14,50 @@
         <span>{{ row.club.cname }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="权限" prop="privilege" width="160">
+    <el-table-column label="权限" prop="privilege" width="140">
       <template slot-scope="{row}">
         <span v-if="row.privilege==0">社员</span>
         <span v-if="row.privilege==1">部长</span>
         <span v-if="row.privilege==2">社长</span>
       </template>
     </el-table-column>
-    <el-table-column label="加入年份" prop="uappyear" width="160">
+    <el-table-column label="加入年份" prop="uappyear" width="140">
       <template slot-scope="{row}">
         <span>{{ row.uappyear }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="社团状态" width="180">
+    <el-table-column label="社团状态" width="160">
       <template slot-scope="{row}">
         <el-tag v-show="row.status==0" type="info">审核中</el-tag>
         <el-tag v-show="row.status==1" type="success">已通过</el-tag>
         <el-tag v-show="row.status==2" type="warning">未通过</el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="Actions" width="400px">
+    <el-table-column label="Actions" width="650px">
       <template slot-scope="{row}">
-        <el-button plain size="mini" type="info" @click="Dialog(row.cid, 'clubuser')">
-          查看社团成员
+        <el-button plain type="primary" size="mini" @click="Dialog(row.cid, 'clubuser')">
+          社团成员
         </el-button>
-        <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'member')">
-          人员记录查询
+        <el-button plain type="primary" size="mini" @click="Dialog(row.cid, 'member')">
+          人员记录
         </el-button>
         <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'activityapp')">
-          查询活动报名
+          报名活动
+        </el-button>
+        <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'clubappactivity')">
+          申请活动
+        </el-button>
+        <el-button plain type="info" size="mini" @click="getClubActivityList(row.cid)">
+          社团活动
+        </el-button>
+        <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'activitylog')">
+          活动记录
         </el-button>
       </template>
     </el-table-column>
   </el-table>
   <el-drawer
-    :title="title"
+    title="社团成员"
     :visible.sync="table"
     direction="rtl"
     size="60%">
@@ -89,10 +98,13 @@
     </el-table>
   </el-drawer>
   <el-drawer
-    :title="title"
+    title="人员记录"
     :visible.sync="memberTable"
     direction="rtl"
-    size="25%">
+    size="30%">
+    <div style="float: right;margin-right: 30px">
+      <el-button icon="el-icon-thumb">增加记录</el-button>
+    </div>
     <el-table :data="memberData">
       <el-table-column property="cmid" label="记录ID" width="110"></el-table-column>
       <el-table-column property="num" label="新增数量"></el-table-column>
@@ -100,10 +112,10 @@
     </el-table>
   </el-drawer>
   <el-drawer
-    :title="title"
+    title="报名活动状态"
     :visible.sync="appActivityTable"
     direction="rtl"
-    size="32%">
+    size="50%">
     <el-table
       :data="appActivity"
       style="width: 100%">
@@ -112,7 +124,7 @@
           <span>{{ row.aaid }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动" prop="cname" width="80">
+      <el-table-column label="活动" prop="cname">
         <template slot-scope="{row}">
           <span>{{ row.aid }}</span>
         </template>
@@ -132,28 +144,112 @@
           <span>{{ row.aafile }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Actions" width="200px">
+        <template slot-scope="{row}">
+          <el-button plain size="mini" type="info" @click="cancelSign(row.aaid)">
+            取消报名
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </el-drawer>
+  <el-drawer
+    title="社团活动"
+    :visible.sync="clubActivityTable"
+    direction="rtl"
+    size="60%">
+    <el-table
+      :data="clubActivity"
+      style="width: 100%">
+      <el-table-column label="活动ID" prop="aid" width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.aid }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="活动名称" prop="aname">
+        <template slot-scope="{row}">
+          <span>{{ row.aname }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="活动地点" prop="location" width="150">
+        <template slot-scope="{row}">
+          <span>{{ row.location }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="开始时间" prop="startDate" width="140">
+        <template slot-scope="{row}">
+          <span>{{ row.startDate }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="结束时间" prop="endDate" width="140">
+        <template slot-scope="{row}">
+          <span>{{ row.endDate }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="活动状态" width="140">
+        <template slot-scope="{row}">
+          <el-tag v-show="row.astatus==0" type="info">审核中</el-tag>
+          <el-tag v-show="row.astatus==1" type="success">已通过</el-tag>
+          <el-tag v-show="row.astatus==2" type="warning">未通过</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="Actions" width="300px">
+        <template slot-scope="{row}">
+          <el-button plain size="mini" type="info" @click="Dialog(row.aid, 'detail')">
+            详情
+          </el-button>
+          <el-button plain size="mini" type="info" @click="Dialog(row.aid, 'edit')">
+            编辑
+          </el-button>
+          <el-button plain size="mini" type="info" @click="delActivity(row.aid, row.cid)">
+            删除活动
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-drawer>
+  <el-dialog :title="title" :visible.sync="dialogFormVisible" width="25%">
+    <activity-dialogue :flag="flag" :c-id="cId" :a-id="aId" @close-dialogue="closeDialogue" />
+  </el-dialog>
+  <el-dialog title="活动记录" :visible="activityLogDialogue" width="50%" @close="activityLogDialogue=false">
+    <activity-log :c-id="cId"></activity-log>
+  </el-dialog>
 </div>
 </template>
 
 <script>
 import { userClub, prsClubUserList, upPrivilege, checkUser } from '@/api/clubuser'
+import { clubActivityList, delActivity } from '@/api/activity'
 import { memberList } from '@/api/clubMember'
-import { appStatusList } from '@/api/activityapp'
+import { appStatusList, delSign } from '@/api/activityapp'
+import { addLog } from '@/api/activityLog'
+import activityDialogue from '@/views/activity/activityDialogue'
+import ActivityLog from '@/views/userclub/activityLog'
 
 export default {
   name: "userclub",
+  components: {
+    ActivityLog,
+    activityDialogue
+  },
   data() {
     return {
       userclub: [],
       table: false,
-      title: '',
       gridData: [],
       memberTable: false,
       memberData: [],
       appActivityTable: false,
-      appActivity: []
+      appActivity: [],
+      clubActivityTable: false,
+      clubActivity: [],
+      dialogFormVisible: false,
+      activityLogDialogue: false,
+      title: '',
+      cid: '',
+      cId: '',
+      aId: '',
+      flag: ''
     }
   },
   created() {
@@ -175,18 +271,36 @@ export default {
     Dialog(cid, flag) {
       if (flag === 'clubuser') {
         this.table = true
-        this.title = '社团成员'
         this.getClubUser(cid)
       }
       if (flag === 'member') {
         this.memberTable = true
-        this.title = '人员变动记录'
         this.getMember(cid)
       }
       if (flag === 'activityapp') {
-        this.title = '报名活动状态'
         this.appActivityTable = true
         this.appStatusList(cid)
+        this.cid = cid
+      }
+      if (flag === 'clubappactivity') {
+        this.title = '申请活动'
+        this.dialogFormVisible = true
+        this.cId = cid
+        this.flag = flag
+      }
+      if (flag === 'activitylog') {
+        this.activityLogDialogue = true
+        this.cId = cid
+      }
+      if (flag === 'detail') {
+        this.dialogFormVisible = true
+        this.aId = cid
+        this.flag = flag
+      }
+      if (flag === 'edit') {
+        this.dialogFormVisible = true
+        this.aId = cid
+        this.flag = flag
       }
     },
     upPrivilege(id) {
@@ -210,6 +324,61 @@ export default {
       appStatusList({ cid: cid }).then(response => {
         // console.log(response)
         this.appActivity = response.data
+      })
+    },
+    cancelSign(id) {
+      console.log(id, this.cid)
+      delSign({ aaid: id, cid: this.cid }).then(response => {
+        if (response.code === 20000) {
+          this.$notify({
+            title: 'Success',
+            message: 'Cancel Sign Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.appStatusList(this.cid)
+        }
+      })
+    },
+    closeDialogue(payload) {
+      // console.log('payload', payload)
+      this.dialogFormVisible = false
+      if (!payload) {
+        this.getList()
+        this.clubActivityTable = false
+      }
+    },
+    getClubActivityList(cid) {
+      this.clubActivityTable = true
+      clubActivityList({ cid: cid }).then(response => {
+        this.clubActivity = response.data
+      })
+    },
+    delActivity(aid, cid) {
+      console.log(aid, cid)
+      delActivity({ aid: aid }).then(response => {
+        if (response.code === 20000) {
+          this.$notify({
+            title: 'Success',
+            message: 'Cancel Sign Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.getClubActivityList(cid)
+        }
+      })
+    },
+    addLog() {
+      addLog().then(response => {
+        if (response.code === 20000) {
+          this.$notify({
+            title: 'Success',
+            message: 'Cancel Sign Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          // this.getMember(cid)
+        }
       })
     }
   }
