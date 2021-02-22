@@ -95,14 +95,15 @@ export default {
   },
   watch: {
     searchclub() {
-      this.clublist = this.searchclub
+      this.activitylist = this.searchclub
+      console.log('search', this.activitylist)
     }
   },
   methods: {
     getList() {
       rootActivityList({ astatus: this.status }).then(response => {
-        const form = response.data
-        console.log(form)
+        // const form = response.data
+        // console.log(form)
         this.activitylist = response.data
       })
     },

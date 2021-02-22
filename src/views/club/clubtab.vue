@@ -5,7 +5,7 @@
         v-model="search"
         size="small"
         placeholder="search"
-        style="width: 80%;margin-right: 15px"
+        style="width: 75%;margin-right: 15px"
         class="filter-item"
         @keyup.enter.native="handleSearch(search)"
       />
@@ -35,7 +35,7 @@
         size="small"
         type="primary"
         icon="el-icon-search"
-        @click="Dialog('edit')"
+        @click="Dialog('add')"
       >
         添加
       </el-button>
@@ -124,13 +124,17 @@ export default {
   methods: {
     handleSearch() {
       searchClub({ cname: this.search }).then(response => {
-        console.log(response)
+        console.log('search', response)
         this.searchclub = response.data
       })
     },
     handleReset(search) {
-      this.$refs.reset.getList()
+      this.$refs.club.getList()
       this.search = ''
+      // searchClub({ cname: this.search }).then(response => {
+      //   console.log('search', response)
+      //   this.searchclub = response.data
+      // })
     },
     add() {
       // this.config.type = 'edit'

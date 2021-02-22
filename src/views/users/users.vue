@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="search" size="small" placeholder="search" style="width: 80%;margin-right: 15px" class="filter-item" @keyup.enter.native="handleSearch(search)" />
+      <el-input v-model="search" size="small" placeholder="请输入姓名或完整学号" style="width: 80%;margin-right: 15px" class="filter-item" @keyup.enter.native="handleSearch(search)" />
       <el-button v-waves class="filter-item" size="small" type="primary" icon="el-icon-search" @click="handleSearch(search)">
         搜索
       </el-button>
@@ -54,11 +54,11 @@
           <span v-else>男</span>
         </template>
       </el-table-column>
-      <el-table-column label="邮箱" width="200px">
-        <template slot-scope="{row}">
-          <span>{{ row.email }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="邮箱" width="200px">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.email }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="行政班级" width="180px">
         <template slot-scope="{row}">
           <span>{{ row.class }}</span>

@@ -7,3 +7,11 @@ export function memberList(data) {
     params: data
   })
 }
+
+export function addMember(data) {
+  return request({
+    url: '/clubmember/addmember',
+    method: 'get',
+    params: data
+  })
+}

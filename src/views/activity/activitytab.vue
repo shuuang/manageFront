@@ -5,7 +5,7 @@
         v-model="search"
         size="small"
         placeholder="search"
-        style="width: 82%;margin-right: 15px"
+        style="width: 75%;margin-right: 15px"
         class="filter-item"
         @keyup.enter.native="handleSearch(search)"
       />
@@ -32,7 +32,7 @@
         size="small"
         type="primary"
         icon="el-icon-search"
-        @click="Dialog('edit')"
+        @click="Dialog('build')"
       >
         发布活动
       </el-button>
@@ -57,7 +57,7 @@
 
 <script>
 import acitivity from '@/views/activity/activity'
-import { searchClub } from '@/api/club'
+import { searchActivity } from '@/api/activity'
 import adialogue from '@/views/activity/activityDialogue'
 
 export default {
@@ -79,8 +79,8 @@ export default {
   },
   methods: {
     handleSearch() {
-      searchClub({ cname: this.search }).then(response => {
-        console.log(response)
+      searchActivity({ aName: this.search }).then(response => {
+        // console.log(response)
         this.searchclub = response.data
       })
     },
@@ -97,9 +97,16 @@ export default {
       console.log('payload', payload)
       this.dialogFormVisible = false
       if (!payload) {
-        this.getList()
+        this.$refs.reset.getList()
       }
     }
+    // refresh(payload) {
+    //   console.log('payload', payload)
+    //   this.dialogFormVisible = false
+    //   if (!payload) {
+    //     this.$refs.reset.getList()
+    //   }
+    // }
   }
 }
 </script>

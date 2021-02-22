@@ -76,3 +76,11 @@ export function clubActivity(data) {
   })
 }
 
+export function searchActivity(data) {
+  return request({
+    url: '/activity/searchactivity',
+    method: 'post',
+    data: data
+  })
+}
+

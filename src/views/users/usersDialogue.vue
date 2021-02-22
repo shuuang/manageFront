@@ -56,7 +56,14 @@
       </el-form-item>
       <el-form-item label="出生日期" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.birthday }}</span>
-        <el-input v-else v-model="form.birthday" autocomplete="off" />
+<!--        <el-input v-else v-model="form.birthday" autocomplete="off" />-->
+        <el-date-picker
+          v-else
+          v-model="form.birthday"
+          type="date"
+          placeholder="选择出生日期"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="住址" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.home }}</span>

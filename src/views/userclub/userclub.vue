@@ -44,7 +44,7 @@
         <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'activityapp')">
           报名活动
         </el-button>
-        <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'clubappactivity')">
+        <el-button plain type="info" size="mini" @click="Dialog(row.cid, 'clubappactivity', row.club.cname)">
           申请活动
         </el-button>
         <el-button plain type="info" size="mini" @click="getClubActivityList(row.cid)">
@@ -62,9 +62,9 @@
     direction="rtl"
     size="60%">
     <el-table :data="gridData">
-      <el-table-column property="cuid" label="用户ID" width="110"></el-table-column>
+      <el-table-column property="cuid" label="用户ID" width="70"></el-table-column>
       <el-table-column property="users.realname" label="用户"></el-table-column>
-      <el-table-column label="权限" prop="privilege" width="160">
+      <el-table-column label="权限" prop="privilege" width="80">
         <template slot-scope="{row}">
           <span v-if="row.privilege==0">社员</span>
           <span v-if="row.privilege==1">部长</span>
@@ -102,8 +102,8 @@
     :visible.sync="memberTable"
     direction="rtl"
     size="30%">
-    <div style="float: right;margin-right: 30px">
-      <el-button icon="el-icon-thumb">增加记录</el-button>
+    <div style="float: right;margin-right: 10px">
+      <el-button size="mini" icon="el-icon-thumb" @click="addRember(cid)">增加记录</el-button>
     </div>
     <el-table :data="memberData">
       <el-table-column property="cmid" label="记录ID" width="110"></el-table-column>
@@ -119,17 +119,17 @@
     <el-table
       :data="appActivity"
       style="width: 100%">
-      <el-table-column label="报名ID" prop="aaid" width="80">
+      <el-table-column label="报名ID" prop="aaid" width="70">
         <template slot-scope="{row}">
           <span>{{ row.aaid }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动" prop="cname">
+      <el-table-column label="活动" prop="cname" >
         <template slot-scope="{row}">
-          <span>{{ row.aid }}</span>
+          <span>{{ row.activity.aName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报名人" prop="cname" width="180">
+      <el-table-column label="报名人" prop="cname">
         <template slot-scope="{row}">
           <span>{{ row.aaName }}</span>
         </template>
@@ -139,12 +139,16 @@
           <span>{{ row.aaConnect }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="文件" prop="cname" width="80">
+      <el-table-column label="文件" prop="cname" width="130">
         <template slot-scope="{row}">
-          <span>{{ row.aafile }}</span>
+          <el-image
+            style="width: 100px; height: 100px"
+            :src="row.aafile"
+            fit="cover"
+          />
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="200px">
+      <el-table-column label="Actions" width="150px">
         <template slot-scope="{row}">
           <el-button plain size="mini" type="info" @click="cancelSign(row.aaid)">
             取消报名
@@ -161,32 +165,32 @@
     <el-table
       :data="clubActivity"
       style="width: 100%">
-      <el-table-column label="活动ID" prop="aid" width="100">
+      <el-table-column label="活动ID" prop="aid" width="70">
         <template slot-scope="{row}">
           <span>{{ row.aid }}</span>
         </template>
       </el-table-column>
       <el-table-column label="活动名称" prop="aname">
         <template slot-scope="{row}">
-          <span>{{ row.aname }}</span>
+          <span>{{ row.aName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动地点" prop="location" width="150">
+      <el-table-column label="活动地点" prop="location" width="120">
         <template slot-scope="{row}">
           <span>{{ row.location }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="开始时间" prop="startDate" width="140">
+      <el-table-column label="开始时间" prop="startDate" width="100">
         <template slot-scope="{row}">
           <span>{{ row.startDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" prop="endDate" width="140">
+      <el-table-column label="结束时间" prop="endDate" width="120">
         <template slot-scope="{row}">
           <span>{{ row.endDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动状态" width="140">
+      <el-table-column label="活动状态" width="120">
         <template slot-scope="{row}">
           <el-tag v-show="row.astatus==0" type="info">审核中</el-tag>
           <el-tag v-show="row.astatus==1" type="success">已通过</el-tag>
@@ -209,7 +213,7 @@
     </el-table>
   </el-drawer>
   <el-dialog :title="title" :visible.sync="dialogFormVisible" width="25%">
-    <activity-dialogue :flag="flag" :c-id="cId" :a-id="aId" @close-dialogue="closeDialogue" />
+    <activity-dialogue :flag="flag" :c-id="cId" :a-id="aId" :c-name="cName" @close-dialogue="closeDialogue" />
   </el-dialog>
   <el-dialog title="活动记录" :visible="activityLogDialogue" width="50%" @close="activityLogDialogue=false">
     <activity-log :c-id="cId"></activity-log>
@@ -220,7 +224,7 @@
 <script>
 import { userClub, prsClubUserList, upPrivilege, checkUser } from '@/api/clubuser'
 import { clubActivityList, delActivity } from '@/api/activity'
-import { memberList } from '@/api/clubMember'
+import { memberList, addMember } from '@/api/clubMember'
 import { appStatusList, delSign } from '@/api/activityapp'
 import { addLog } from '@/api/activityLog'
 import activityDialogue from '@/views/activity/activityDialogue'
@@ -249,7 +253,8 @@ export default {
       cid: '',
       cId: '',
       aId: '',
-      flag: ''
+      flag: '',
+      cName: ''
     }
   },
   created() {
@@ -268,7 +273,7 @@ export default {
         this.gridData = response.data
       })
     },
-    Dialog(cid, flag) {
+    Dialog(cid, flag, cname) {
       if (flag === 'clubuser') {
         this.table = true
         this.getClubUser(cid)
@@ -276,6 +281,7 @@ export default {
       if (flag === 'member') {
         this.memberTable = true
         this.getMember(cid)
+        this.cId = cid
       }
       if (flag === 'activityapp') {
         this.appActivityTable = true
@@ -287,6 +293,8 @@ export default {
         this.dialogFormVisible = true
         this.cId = cid
         this.flag = flag
+        this.cName = cname
+        // console.log(cname)
       }
       if (flag === 'activitylog') {
         this.activityLogDialogue = true
@@ -322,7 +330,7 @@ export default {
     },
     appStatusList(cid) {
       appStatusList({ cid: cid }).then(response => {
-        // console.log(response)
+        console.log(response)
         this.appActivity = response.data
       })
     },
@@ -351,6 +359,7 @@ export default {
     getClubActivityList(cid) {
       this.clubActivityTable = true
       clubActivityList({ cid: cid }).then(response => {
+        console.log(response)
         this.clubActivity = response.data
       })
     },
@@ -380,6 +389,16 @@ export default {
           // this.getMember(cid)
         }
       })
+    },
+    addRember() {
+      // console.log('增加人员记录')
+      // console.log(this.cId)
+      addMember({ cid: this.cId }).then(res => {
+        console.log(res)
+        this.getMember(this.cId)
+      })
+      // const time = new Date()
+      // console.log(time.getFullYear())
     }
   }
 }

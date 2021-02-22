@@ -31,9 +31,10 @@
         <span v-if="flag==='detail'">{{ form.aIntroduction }}</span>
         <el-input v-else v-model="form.aIntroduction" autocomplete="off"/>
       </el-form-item>
-      <el-form-item label="社团" :label-width="formLabelWidth">
-        <span v-if="flag==='detail'">{{ form.club.cname }}</span>
-        <el-input v-else autosize v-model="form.club.cname" autocomplete="off"/>
+      <el-form-item v-if="flag==='detail'||flag==='clubappactivity'" label="社团" :label-width="formLabelWidth">
+        <span v-if="flag==='detail'||flag==='clubappactivity'">{{ form.club.cname||cName }}</span>
+<!--        <el-input v-else autosize v-model="form.club.cname" autocomplete="off"/>-->
+<!--        <span>社联</span>-->
       </el-form-item>
       <el-form-item label="活动地点" :label-width="formLabelWidth">
         <span v-if="flag==='detail'">{{ form.location }}</span>
@@ -42,6 +43,54 @@
       <el-form-item v-if="flag==='detail'" label="创办单位" :label-width="formLabelWidth">
         <span v-if="form.department==0">社联</span>
         <span v-if="form.department==1">社团</span>
+      </el-form-item>
+      <el-form-item v-if="flag==='detail'||flag==='clubappactivity'||flag==='build'" label="相关文件" :label-width="formLabelWidth">
+        <el-image
+          v-if="flag==='detail'"
+          style="width: 100px; height: 100px"
+          :src="form.aafile"
+          fit="cover"
+        />
+        <el-upload
+          v-else
+          :action="action"
+          name="file"
+          ref="upload"
+          :http-request="uploads"
+          list-type="picture-card"
+          :auto-upload="true"
+          multiple
+        >
+          <i slot="default" class="el-icon-plus"></i>
+          <div slot="file" slot-scope="{file}" >
+            <img
+              class="el-upload-list__item-thumbnail"
+              :src="file.url"
+            >
+            <span class="el-upload-list__item-actions">
+            <span
+              class="el-upload-list__item-preview"
+              @click="handlePictureCardPreview(file)"
+            >
+              <i class="el-icon-zoom-in"></i>
+            </span>
+            <span
+              v-if="!disabled"
+              class="el-upload-list__item-delete"
+              @click="handleDownload(file)"
+            >
+              <i class="el-icon-download"></i>
+            </span>
+            <span
+              v-if="!disabled"
+              class="el-upload-list__item-delete"
+              @click="handleRemove(file)"
+            >
+              <i class="el-icon-delete"></i>
+            </span>
+          </span>
+          </div>
+        </el-upload>
       </el-form-item>
       <!--      <el-form-item v-if="flag==='edit'" label="创办单位" :label-width="formLabelWidth">-->
       <!--        <span>{{ form.department }}</span>-->
@@ -113,6 +162,7 @@
 <script>
 import { updateActivity, activityInfo, addActivity, appActivity } from '@/api/activity'
 import checkPermission from '@/utils/permission'
+import { upload } from '@/api/club'
 
 export default {
   name: 'ActivityDialogue',
@@ -128,6 +178,9 @@ export default {
     cId: {
       require: false,
       type: Number
+    },
+    cName: {
+      require: true
     }
   },
   data() {
@@ -167,7 +220,10 @@ export default {
         // console.log(response.data)
         // response.data.appImage = process.env.VUE_APP_BASE_API + '/' + response.data.appImage
         // this.form['appImage'] = 'http://127.0.0.1:3000' + fileUrl
-        // console.log(response)
+        console.log(response)
+        console.log(response.data.aafile)
+        response.data.aafile = process.env.VUE_APP_BASE_API + '/' + response.data.aafile
+        console.log(response.data.aafile)
         this.form = response.data
       })
     },
@@ -187,6 +243,7 @@ export default {
     },
     getAdd() {
       if (checkPermission(['admin'])) {
+        this.form.cid = 33 // 社联的cid
         addActivity(this.form).then(response => {
           if (response.code === 20000) {
             this.$notify({
@@ -196,6 +253,7 @@ export default {
               duration: 2000
             })
             this.$emit('close-dialogue', false)
+            // this.$emit('refresh', false)
           }
         })
       }
@@ -216,6 +274,24 @@ export default {
     },
     back() {
       this.$emit('close-dialogue', false)
+    },
+    uploads() {
+      const formData = new FormData()
+      // console.log(this.$refs.upload)
+      const file = this.$refs.upload.uploadFiles[0]
+      // console.log(file)
+      // console.log(file.raw)
+      // const headerConfig = { headers: { 'Content-Type': 'multipart/form-data' }}
+      if (!file) { // 若未选择文件
+        alert('请选择文件')
+        return
+      }
+      formData.append('file', file.raw)
+      upload(formData).then(response => {
+        console.log(response)
+        this.form.aafile = response.data.path
+        console.log(this.form.aafile)
+      })
     }
     // handleRemove(file) {
     //   console.log(file)

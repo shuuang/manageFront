@@ -184,18 +184,18 @@ export const asyncRoutes = [
     ]
   },
   // 个人信息修改
-  {
-    path: '/userInfo',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: '个人信息', icon: 'icon', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/userInfo',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/icons/index'),
+  //       name: 'Icons',
+  //       meta: { title: '个人信息', icon: 'icon', noCache: true }
+  //     }
+  //   ]
+  // },
   // 用户列表
   {
     path: '/user',
@@ -289,9 +289,6 @@ export const asyncRoutes = [
   {
     path: '/userclub',
     component: Layout,
-    meta: {
-      roles: ['editor']
-    },
     children: [
       {
         path: 'index',

@@ -54,29 +54,33 @@
       <el-table
         :data="appclub"
         style="width: 100%">
-        <el-table-column label="报名ID" prop="aaid" width="80">
+        <el-table-column label="报名ID" prop="aaid" width="70">
           <template slot-scope="{row}">
             <span>{{ row.aaid }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="社团" prop="cname" width="80">
+        <el-table-column label="社团" prop="cname">
           <template slot-scope="{row}">
             <span>{{ row.club.cname }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="报名人" prop="cname" width="180">
+        <el-table-column label="报名人" prop="cname" width="100">
           <template slot-scope="{row}">
             <span>{{ row.aaName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="报名人联系方式" prop="cname" width="180">
+        <el-table-column label="报名人联系方式" prop="cname" width="130">
           <template slot-scope="{row}">
             <span>{{ row.aaConnect }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="文件" prop="cname" width="80">
+        <el-table-column label="文件" prop="cname" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.aafile }}</span>
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="row.aafile"
+              fit="cover"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -101,7 +105,36 @@
           <el-input v-model="appactivity.aaConnect"></el-input>
         </el-form-item>
         <el-form-item label="文件">
-          <el-input v-model="appactivity.aafile"></el-input>
+          <el-image
+            style="width: 100px; height: 100px"
+            :src="appactivity.aafile"
+            fit="cover"
+          />
+          <el-upload
+            :action="action"
+            name="file"
+            ref="fileFile"
+            :http-request="fileUpload"
+            list-type="picture-card"
+            :auto-upload="true"
+            multiple
+          >
+            <i slot="default" class="el-icon-plus"></i>
+            <div slot="file" slot-scope="{file}" >
+              <img
+                class="el-upload-list__item-thumbnail"
+                :src="file.url"
+              >
+              <span class="el-upload-list__item-actions">
+            <span
+              class="el-upload-list__item-preview"
+              @click="handlePictureCardPreview(file)"
+            >
+              <i class="el-icon-zoom-in"></i>
+            </span>
+          </span>
+            </div>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer" align="right">
@@ -117,11 +150,13 @@ import { publishActivity, clubActivity } from '@/api/activity'
 import { listForActivity, signActivity } from '@/api/activityapp'
 import { userClub } from '@/api/clubuser'
 import checkPermission from '@/utils/permission'
+import { upload } from '@/api/club'
 
 export default {
   name: "publishActivity",
   data() {
     return {
+      action: 'http://127.0.0.1:3000/public/upload/' + name,
       dialogFormVisible: false,
       signStatus: false,
       activityapplist: [],
@@ -140,6 +175,14 @@ export default {
   created() {
     this.getList()
     this.getUserClub()
+    const time = '2021-02-20T09:51:39.556Z'
+    const time1 = '2021-03-24T16:00:00.000Z'
+    // const time2 = new Date('2020/03/25')
+    // console.log(time)
+    // console.log(new Date(time1))
+    // console.log(new Date(time2))
+    console.log(time > time1)
+    console.log(time1 > time)
   },
   methods: {
     checkPermission,
@@ -170,7 +213,7 @@ export default {
       // console.log('press')
       listForActivity({ aid: aid }).then(response => {
         this.appclub = response.data
-        // console.log(this.appclub)
+        console.log(this.appclub)
       })
     },
     Dialog(aid, tag) {
@@ -218,6 +261,20 @@ export default {
         aafile: '',
         aid: ''
       }
+    },
+    fileUpload() {
+      const formData = new FormData()
+      const file = this.$refs.fileFile.uploadFiles[0]
+      if (!file) { // 若未选择文件
+        alert('请选择文件')
+        return
+      }
+      formData.append('file', file.raw)
+      upload(formData).then(response => {
+        // console.log(response)
+        this.appactivity.aafile = 'http://localhost:3000/' + response.data.path
+        // console.log(this.form.appImage)
+      })
     }
   }
 }

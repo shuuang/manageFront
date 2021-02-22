@@ -20,14 +20,15 @@
           <el-form-item label="社团ID">
             <span>{{ props.row.cid }}</span>
           </el-form-item>
-          <el-form-item label="图片">
-            <span>{{ props.row.img }}</span>
-          </el-form-item>
-          <el-form-item label="视频">
-            <span>{{ props.row.video }}</span>
-          </el-form-item>
           <el-form-item label="记录评论数">
             <span>{{ props.row.alcounts }}</span>
+          </el-form-item>
+          <el-form-item label="图片">
+            <img width="100px" height="100px" style="margin: 0px 2px" v-for="item in props.row.img.img" :src="'http://localhost:3000/' + item"/>
+          </el-form-item>
+          <el-form-item label="视频">
+<!--            <span>{{ props.row.video }}</span>-->
+            <video width="100%" height="100%" v-for="item in props.row.video.video" :src="'http://localhost:3000/' + item"/>
           </el-form-item>
         </el-form>
       </template>
@@ -80,8 +81,15 @@ export default {
   methods: {
     getList() {
       logList({ cid: this.cId }).then(response => {
-        console.log(response)
+        response.data.filter(item => {
+          item.img = JSON.parse(item.img)
+          item.video = JSON.parse(item.video)
+        })
+        // console.log(response.data)
+        // this.img = response.data.img.img
+        // this.video = response.data.video.video
         this.tableData = response.data
+        console.log(this.tableData)
       })
     },
     delLog(alid) {
