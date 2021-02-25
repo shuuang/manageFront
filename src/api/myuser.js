@@ -53,3 +53,11 @@ export function rootrePwd(data) {
     data: data
   })
 }
+//Echarts
+export function eGender(data) {
+  return request({
+    url: '/users/egender',
+    method: 'post',
+    data: data
+  })
+}

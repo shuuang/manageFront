@@ -40,7 +40,7 @@ export default {
     chartData: {
       deep: true,
       handler(val) {
-        this.setOptions(val)
+        this.initChart(val)
       }
     }
   },
@@ -58,13 +58,11 @@ export default {
   },
   methods: {
     initChart() {
+      // console.log(this.chartData)
       this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
-    },
-    setOptions({ expectedData, actualData } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: this.chartData.xAxis,
           boundaryGap: false,
           axisTick: {
             show: false
@@ -72,7 +70,7 @@ export default {
         },
         grid: {
           left: 10,
-          right: 10,
+          right: 20,
           bottom: 20,
           top: 30,
           containLabel: true
@@ -87,47 +85,30 @@ export default {
         yAxis: {
           axisTick: {
             show: false
-          }
+          },
+          max: 6,
+          splitNumber: 4
         },
-        legend: {
-          data: ['expected', 'actual']
-        },
-        series: [{
-          name: 'expected', itemStyle: {
-            normal: {
-              color: '#FF005A',
-              lineStyle: {
+        // legend: {
+        //   data: ['expected', 'actual']
+        // },
+        series: [
+          {
+            name: '新增社团数量', itemStyle: {
+              normal: {
                 color: '#FF005A',
-                width: 2
+                lineStyle: {
+                  color: '#FF005A',
+                  width: 2
+                }
               }
-            }
-          },
-          smooth: true,
-          type: 'line',
-          data: expectedData,
-          animationDuration: 2800,
-          animationEasing: 'cubicInOut'
-        },
-        {
-          name: 'actual',
-          smooth: true,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#3888fa',
-              lineStyle: {
-                color: '#3888fa',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
-              }
-            }
-          },
-          data: actualData,
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
-        }]
+            },
+            smooth: true,
+            type: 'line',
+            data: this.chartData.yAxis,
+            animationDuration: 2800,
+            animationEasing: 'cubicInOut'
+          }]
       })
     }
   }

@@ -97,6 +97,9 @@ export default {
     searchclub() {
       this.activitylist = this.searchclub
       console.log('search', this.activitylist)
+    },
+    status() {
+      this.getList()
     }
   },
   methods: {
@@ -148,6 +151,7 @@ export default {
       // console.log('payload', payload)
       this.dialogFormVisible = false
       if (!payload) {
+        // this.status = 1
         this.getList()
       }
     }

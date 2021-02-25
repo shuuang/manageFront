@@ -220,10 +220,10 @@ export default {
         // console.log(response.data)
         // response.data.appImage = process.env.VUE_APP_BASE_API + '/' + response.data.appImage
         // this.form['appImage'] = 'http://127.0.0.1:3000' + fileUrl
-        console.log(response)
-        console.log(response.data.aafile)
+        // console.log(response)
+        // console.log(response.data.aafile)
         response.data.aafile = process.env.VUE_APP_BASE_API + '/' + response.data.aafile
-        console.log(response.data.aafile)
+        // console.log(response.data.aafile)
         this.form = response.data
       })
     },

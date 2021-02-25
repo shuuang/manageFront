@@ -1,96 +1,119 @@
 <template>
   <div class="dashboard-editor-container">
-    <github-corner class="github-corner" />
+<!--    <github-corner class="github-corner" />-->
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+<!--    <panel-group @handleSetLineChartData="handleSetLineChartData" />-->
+    <panel-group />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
     </el-row>
 
     <el-row :gutter="32">
+<!--      <el-col :xs="24" :sm="24" :lg="8">-->
+<!--        <div class="chart-wrapper">-->
+<!--          <raddar-chart />-->
+<!--        </div>-->
+<!--      </el-col>-->
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
+<!--          <pie-chart :gender-ratio="genderRatio"/>-->
+          <pie-chart :male="male" :female="female" :num="num"/>
         </div>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart />
-        </div>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="8">
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <todo-list />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <box-card />
-      </el-col>
+<!--      <el-col :xs="48" :sm="48" :lg="16">-->
+<!--        <div class="chart-wrapper">-->
+<!--          <bar-chart />-->
+<!--        </div>-->
+<!--      </el-col>-->
     </el-row>
   </div>
 </template>
 
 <script>
-import GithubCorner from '@/components/GithubCorner'
+// import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
+// import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
-import BarChart from './components/BarChart'
-import TransactionTable from './components/TransactionTable'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
+// import BarChart from './components/BarChart'
+import { eGender } from '@/api/myuser'
+import { eClub } from '@/api/club'
 
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+// const lineChartData = {
+//   expectedData: [100, 120, 161, 134, 105, 160, 165],
+//   actualData: [120, 82, 91, 154, 162, 140, 145]
+// }
 
 export default {
   name: 'DashboardAdmin',
   components: {
-    GithubCorner,
+    // GithubCorner,
     PanelGroup,
     LineChart,
-    RaddarChart,
-    PieChart,
-    BarChart,
-    TransactionTable,
-    TodoList,
-    BoxCard
+    // RaddarChart,
+    PieChart
+    // BarChart
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      lineChartData: {
+        xAxis: [],
+        yAxis: []
+      },
+      genderRatio: [],
+      male: '',
+      female: '',
+      num: ''
     }
   },
+  created() {
+    this.getGender()
+    this.getList()
+  },
   methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+    // handleSetLineChartData(type) {
+    //   this.lineChartData = lineChartData[type]
+    // },
+    getGender() {
+      eGender().then(res => {
+        // this.genderRatio.push(res.data[0].maleList.length)
+        // this.genderRatio.push(res.data[1].femaleList.length)
+        // console.log(this.genderRatio)
+        this.male = res.data[0].maleList.length
+        this.female = res.data[1].femaleList.length
+        this.num = this.male + this.female
+      })
+    },
+    getList() {
+      eClub({ appStatus: 1 }).then(response => {
+        this.lineChartData.xAxis = response.xAxis
+        this.lineChartData.yAxis = response.yAxis
+        // const list = response.data.filter(item => {
+        //   item.createAt = new Date(item.createAt).getFullYear()
+        //   return item
+        // })
+        // const xAxis = []
+        // list.forEach(item => {
+        //   xAxis.push(item.createAt)
+        // })
+        // const xAxisSet = Array.from(new Set(xAxis))
+        // this.lineChartData.xAxis = xAxisSet
+        // console.log(response)
+        // const xnum = 0
+        // for (let i = 0; i < xAxisSet.length; i++) {
+        //   // console.log(xAxisSet[i])
+        //   for (let j = 0; j < list.length; i++) {
+        //     // console.log(xAxisSet[i])
+        //     console.log(list[j])
+        //   }
+        // }
+        // console.log(new Set(xAxis))
+        // const str = ['2021-2-18', '2021/2/18']
+        // const strs = new Date(str[1]).getFullYear()
+        // console.log(strs)
+        // this.clublist = response.data
+      })
     }
   }
 }

@@ -59,3 +59,11 @@ export function upload(data) {
     uploadFile: true
   })
 }
+// Echarts
+export function eClub(data) {
+  return request({
+    url: '/club/eClub',
+    method: 'post',
+    data: data
+  })
+}

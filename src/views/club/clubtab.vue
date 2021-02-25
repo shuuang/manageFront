@@ -146,10 +146,10 @@ export default {
       this.title = '添加社团'
     },
     closeDialogue(payload) {
-      console.log('payload', payload)
+      // console.log('payload', payload)
       this.dialogFormVisible = false
       if (!payload) {
-        this.getList()
+        this.$refs.club.getList()
       }
     }
   }

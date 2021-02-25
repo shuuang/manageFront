@@ -74,7 +74,7 @@
         <el-input v-else v-model="form.nation" autocomplete="off" />
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer" align="right">
+    <div slot="footer" v-if="flag!='detail'" class="dialog-footer" align="right">
       <el-button size="mini" @click="back">取 消</el-button>
       <el-button size="mini" v-if="flag==='repwd'" type="primary" @click="rePwd()">确 定</el-button>
       <el-button size="mini" v-else type="primary" @click="getEdit()">确 定</el-button>

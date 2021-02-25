@@ -7,48 +7,50 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            用户数量
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <p class="card-panel-num">{{ usernum }}</p>
+<!--          <count-to :start-val="0" :end-val="usernum" :duration="2600" class="card-panel-num" />-->
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+          <svg-icon icon-class="tree-table" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            社团数量
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <p class="card-panel-num">{{ clubnum }}</p>
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
+          <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            总评论数量
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <p class="card-panel-num">{{ commentnum }}</p>
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('shoppings')">
         <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+<!--          <i class="el-icon-s-flag" />-->
+          <svg-icon icon-class="list" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Shoppings
+            活动数量
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <p class="card-panel-num">{{ activitynum }}</p>
         </div>
       </div>
     </el-col>
@@ -56,15 +58,56 @@
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
+// import CountTo from 'vue-count-to'
+import { usersList } from '@/api/myuser'
+import { clubList } from '@/api/club'
+import { rootActivityList } from '@/api/activity'
+import { commentNum } from '@/api/activityLog'
 
 export default {
   components: {
-    CountTo
+    // CountTo
+  },
+  data() {
+    return {
+      usernum: '102400',
+      clubnum: '111',
+      commentnum: '',
+      activitynum: ''
+    }
+  },
+  created() {
+    this.getUserList()
+    this.getClubList()
+    this.getActivityList()
+    this.getComment()
   },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getUserList() {
+      usersList().then(response => {
+        // console.log(response.data.length)
+        this.usernum = response.data.length
+      })
+    },
+    getClubList() {
+      clubList({ appStatus: 1 }).then(response => {
+        // console.log(response)
+        this.clubnum = response.data.length
+      })
+    },
+    getActivityList() {
+      rootActivityList({ astatus: 1 }).then(response => {
+        this.activitynum = response.data.length
+      })
+    },
+    getComment() {
+      commentNum().then(res => {
+        // console.log(res.data.length)
+        this.commentnum = res.data.length
+      })
     }
   }
 }

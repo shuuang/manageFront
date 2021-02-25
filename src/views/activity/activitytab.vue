@@ -37,15 +37,15 @@
         发布活动
       </el-button>
     </div>
-    <el-tabs type="border-card">
-      <el-tab-pane label="活动">
-        <acitivity ref="reset" :status="status=1" :searchclub="searchclub"></acitivity>
+    <el-tabs v-model="mstatus" type="border-card">
+      <el-tab-pane label="活动" name="1">
+        <acitivity ref="activity" :status="status=mstatus" :searchclub="searchclub"></acitivity>
       </el-tab-pane>
-      <el-tab-pane label="审核中">
-        <acitivity :status="status=0"></acitivity>
+      <el-tab-pane label="审核中" name="0">
+        <acitivity ref="checking" :status="status=mstatus"></acitivity>
       </el-tab-pane>
-      <el-tab-pane label="审核失败">
-        <acitivity :status="status=2"></acitivity>
+      <el-tab-pane label="审核失败" name="2">
+        <acitivity ref="fail" :status="status=mstatus"></acitivity>
       </el-tab-pane>
     </el-tabs>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="30%">
@@ -74,7 +74,23 @@ export default {
       dialogFormVisible: false,
       searchclub: [],
       title: '',
-      flag: ''
+      flag: '',
+      mstatus: '1'
+    }
+  },
+  watch: {
+    mstatus() {
+      switch (this.mstatus) {
+        case '1':
+          this.$refs.activity.getList()
+          break
+        case '2':
+          this.$refs.fail.getList()
+          break
+        case '0':
+          this.$refs.checking.getList()
+          break
+      }
     }
   },
   methods: {
@@ -85,7 +101,7 @@ export default {
       })
     },
     handleReset(search) {
-      this.$refs.reset.getList()
+      this.$refs.activity.getList()
       this.search = ''
     },
     Dialog(flag) {
@@ -97,7 +113,7 @@ export default {
       console.log('payload', payload)
       this.dialogFormVisible = false
       if (!payload) {
-        this.$refs.reset.getList()
+        this.$refs.activity.getList()
       }
     }
     // refresh(payload) {

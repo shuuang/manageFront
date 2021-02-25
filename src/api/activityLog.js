@@ -23,3 +23,12 @@ export function addLog(data) {
     data: data
   })
 }
+
+// 总评论数量
+export function commentNum(data) {
+  return request({
+    url: '/logcomment/allcomment',
+    method: 'get',
+    params: data
+  })
+}

@@ -3,7 +3,8 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login</h3>
+        <h3 class="title">社团管理系统</h3>
+        <h5 class="title" style="font-size: 20px">后台管理</h5>
       </div>
 
       <el-form-item prop="username">
@@ -45,7 +46,7 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="default" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
 <!--      <div style="position:relative">-->
 <!--        <div class="tips">-->
@@ -204,7 +205,7 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
+$bg: #78bcc4;
 $light_gray:#fff;
 $cursor: #fff;
 
@@ -248,9 +249,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2c3f56;
-$dark_gray: #000000;
-$light_gray:#eee;
+$bg: #78bcc4;
+$dark_gray: #f7f8f3;
+$light_gray: #f7f8f3;
 
 .login-container {
   min-height: 100%;

@@ -38,18 +38,21 @@
 <!--      </el-table-column>-->
       <el-table-column label="Actions" width="360px">
         <template slot-scope="{row}">
+          <el-button plain size="mini" @click="Dialog(row.aid, 'detail')">
+            活动详情
+          </el-button>
           <el-button plain v-if="checkPermission(['admin'])" type="info" size="mini" @click="appClub(row.aid)">
             查看报名社团
           </el-button>
           <el-button plain v-if="checkPermission(['editor'])&&row.department == 1" type="info" size="mini" @click="Dialog(row.aid, 'sign')">
             报名
           </el-button>
-<!--          <el-button plain v-if="checkPermission(['editor'])" size="mini" @click="Dialog(row.aid, 'status')">-->
-<!--            状态-->
-<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog :title="title" :visible.sync="activityDetail" width="25%">
+      <activity-dialogue :flag="flag" :a-id="aId" @close-dialogue="closeDialogue" />
+    </el-dialog>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="34%">
       <el-table
         :data="appclub"
@@ -105,11 +108,11 @@
           <el-input v-model="appactivity.aaConnect"></el-input>
         </el-form-item>
         <el-form-item label="文件">
-          <el-image
-            style="width: 100px; height: 100px"
-            :src="appactivity.aafile"
-            fit="cover"
-          />
+<!--          <el-image-->
+<!--            style="width: 100px; height: 100px"-->
+<!--            :src="appactivity.aafile"-->
+<!--            fit="cover"-->
+<!--          />-->
           <el-upload
             :action="action"
             name="file"
@@ -146,14 +149,18 @@
 </template>
 
 <script>
-import { publishActivity, clubActivity } from '@/api/activity'
+import { publishActivity } from '@/api/activity'
 import { listForActivity, signActivity } from '@/api/activityapp'
 import { userClub } from '@/api/clubuser'
 import checkPermission from '@/utils/permission'
 import { upload } from '@/api/club'
+import activityDialogue from '@/views/activity/activityDialogue'
 
 export default {
   name: "publishActivity",
+  components: {
+    activityDialogue
+  },
   data() {
     return {
       action: 'http://127.0.0.1:3000/public/upload/' + name,
@@ -169,20 +176,23 @@ export default {
         aafile: '',
         aid: ''
       },
-      title: ''
+      title: '',
+      flag: '',
+      aId: '',
+      activityDetail: false
     }
   },
   created() {
     this.getList()
     this.getUserClub()
-    const time = '2021-02-20T09:51:39.556Z'
-    const time1 = '2021-03-24T16:00:00.000Z'
+    // const time = '2021-02-20T09:51:39.556Z'
+    // const time1 = '2021-03-24T16:00:00.000Z'
     // const time2 = new Date('2020/03/25')
     // console.log(time)
     // console.log(new Date(time1))
     // console.log(new Date(time2))
-    console.log(time > time1)
-    console.log(time1 > time)
+    // console.log(time > time1)
+    // console.log(time1 > time)
   },
   methods: {
     checkPermission,
@@ -192,13 +202,13 @@ export default {
       //   console.log('获取本社团的活动列表，操作按钮也需要改')
       // }
       publishActivity().then(response => {
-        console.log('list', response)
+        // console.log('list', response)
         this.activityapplist = response.data
       })
     },
     getUserClub() {
       userClub().then(response => {
-        console.log(response)
+        // console.log(response)
         response.data.forEach(item => {
           this.options.push({
             cid: item.cid,
@@ -227,7 +237,12 @@ export default {
         this.dialogFormVisible = true
         this.appactivity.aid = aid
       }
-      console.log(aid)
+      if (tag === 'detail') {
+        this.title = '活动详情'
+        this.flag = tag
+        this.activityDetail = true
+        this.aId = aid
+      }
     },
     appActivity() {
       console.log(this.appactivity)
@@ -275,6 +290,9 @@ export default {
         this.appactivity.aafile = 'http://localhost:3000/' + response.data.path
         // console.log(this.form.appImage)
       })
+    },
+    closeDialogue() {
+      this.activityDetail = false
     }
   }
 }

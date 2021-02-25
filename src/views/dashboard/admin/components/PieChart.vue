@@ -21,12 +21,38 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    genderRatio: {
+      type: Array
+    },
+    male: {
+      type: [String, Number],
+      default: '5'
+    },
+    female: {
+      type: [String, Number],
+      default: '5'
+    },
+    num: {
+      type: [String, Number],
+      default: '10'
     }
   },
   data() {
     return {
       chart: null
+      // num: '10',
+      // female: '5',
+      // male: '5'
     }
+  },
+  watch: {
+    // genderRatio: {
+    //   // deep: true,
+    //   handler(val) {
+    //     this.initChart(val)
+    //   }
+    // }
   },
   mounted() {
     this.$nextTick(() => {
@@ -40,10 +66,16 @@ export default {
     this.chart.dispose()
     this.chart = null
   },
+  // created() {
+  //   // console.log(this.genderRatio)
+  //   this.num = this.genderRatio[0] + this.genderRatio[1]
+  //   this.male = this.genderRatio[0]
+  //   this.female = this.genderRatio[1]
+  // },
   methods: {
     initChart() {
+      // console.log(this.female,this.male)
       this.chart = echarts.init(this.$el, 'macarons')
-
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -52,24 +84,21 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: ['female', 'male']
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '用户男女比例',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 11, name: 'female' },
+              { value: 8, name: 'male' }
             ],
             animationEasing: 'cubicInOut',
-            animationDuration: 2600
+            animationDuration: 2000
           }
         ]
       })
